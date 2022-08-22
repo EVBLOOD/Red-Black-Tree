@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/22 18:34:40 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/22 20:38:58 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ namespace ft
         alloc                   ac;
         RedBlackTree<type_name> *head;
         cmpfun                  cmpr;
+        size_amount             size;
         
         RedBlackTree<type_name> *newnode(type_name value)
         {
@@ -66,19 +67,22 @@ namespace ft
             if (*head == NULL)
             {
                 *head = nv;
+                if (!size)
+                    nv->color = false;
                 return;
             }
             if (cmpr(nv->value, (*head)->value))
                 insert(&((*head)->left), nv);
             else
                 insert(&((*head)->right), nv);
-            if (abs(hight((*head)->right) - hight((*head)->right)) > 0)  // check for balencing and colors
-            {
+            (*head)->->parent = 
+            // if (abs(hight((*head)->right) - hight((*head)->right)) > 0)  // check for balencing and colors
+            // {
                 
-            }
+            // }
         }
         public:
-            RBT() : head(NULL) {}
+            RBT() : head(NULL), size(0) {}
             void insert(type_name value)
             {
                 insert(&head, newnode(value));
