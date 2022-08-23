@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/23 10:52:58 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/23 11:48:47 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <memory>
 #include <sys/_types/_size_t.h>
+#include <iostream>
 #define red true
 #define black false
 #define rt 1
@@ -52,6 +53,7 @@ namespace ft
         {
             RedBlackTree<T> *newnode = ac.allocate(1);
             newnode->value = value;
+            newnode->color = red;
             return newnode;
         }
         size_amount max(size_amount a, size_amount b)
@@ -60,14 +62,14 @@ namespace ft
                 return a;
             return b;
         }
-        size_amount hight(RedBlackTree<type_name> *head)
-        {
-            if (head == NULL)
-                return 0;
-            if (head->color == false)
-                return max(hight(head->color), hight(head->right)) + 1;
-            return max(hight(head->color), hight(head->right));
-        }
+        // size_amount hight(RedBlackTree<type_name> *head)
+        // {
+        //     if (head == NULL)
+        //         return 0;
+        //     if (head->color == false)
+        //         return max(hight(head->color), hight(head->right)) + 1;
+        //     return max(hight(head->color), hight(head->right));
+        // }
         void    recoloring(RedBlackTree<type_name> *paint)
         {
             do {
@@ -115,9 +117,9 @@ namespace ft
                 return;
             }
             if (cmpr(nv->value, (*head)->value))
-                insert(&((*head)->left), nv, r);
-            else
                 insert(&((*head)->right), nv, l);
+            else
+                insert(&((*head)->left), nv, r);
             if ((*head)->left)
                 (*head)->left->parent = *head;
             if ((*head)->right)
@@ -139,13 +141,13 @@ namespace ft
                         }
                    }
                }
-               else
+               else if (position == l)
                {
                     if ((*head)->parent->left && (*head)->parent->left->color == red)
                         recoloring((*head)->parent);
                     else
                     {
-                        if (((*head)->parent)->right->right)
+                        if (((*head)->parent)->left->left)
                             right_rotation(head);
                         else
                         {
@@ -156,12 +158,35 @@ namespace ft
                }
             }
         }
+        void    printing(RedBlackTree<type_name> *root, int level)
+        {
+            if (!root)
+                return;
+            std::cout << level << "\t";
+            if (root->position == rt)
+                std::cout << "position: root ";
+            else if (root->position == r)
+                std::cout << "position: right ";
+            else
+                std::cout << "position: left ";
+            if (root->color == red)
+                std::cout << "color: red ";
+            else
+                std::cout << "color: black ";
+            std::cout << " | the number: " << root->value << "\n";
+            printing(root->right, level + 1);
+            printing(root->left, level + 1);
+        }
         public:
             RBT() : head(NULL), size(0) {}
             void insert(type_name value)
             {
                 insert(&head, newnode(value), rt);
                 size++;
+            }
+            void  printing()
+            {
+                printing(this->head, 0);
             }
     };
 }
