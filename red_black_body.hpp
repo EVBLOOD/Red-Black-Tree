@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/23 22:32:18 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/23 22:46:06 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ namespace ft
                 paint->right->color = !(paint->right->color);
             if (paint->position == rt)
                 return ;
-            paint->color = !(paint->color);
+            // paint->color = !(paint->color);
             recoloring(paint->parent);
         }
         //      void    right_rotation(RedBlackTree<type_name> **root)
@@ -205,10 +205,7 @@ namespace ft
             if ((*head)->left->left)
                 return puts("left left"), right_rotation(head);
             puts("left right");
-            std::cout << "checking this shit : " << (*head)->value << "\n";
             left_rotation(&((*head)->left));
-            std::cout << "checking this shit : " << (*head)->value << "\n";
-            std::cout << "wtf : " << (*head)->parent->value << "\n";
             right_rotation(head);
         }
         int    recentlyadded(RedBlackTree<type_name> *x, type_name value)
