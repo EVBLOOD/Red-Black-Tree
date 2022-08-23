@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/23 10:42:43 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/23 10:52:58 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <sys/_types/_size_t.h>
 #define red true
 #define black false
-#define root 1
+#define rt 1
 #define l 2
 #define r 3
 namespace ft
@@ -75,14 +75,35 @@ namespace ft
                     paint->left->color = !(paint->left->color);
                 if (paint->right)
                     paint->right->color = !(paint->right->color);
-                if (paint->parent->color == root)
+                if (paint->parent->color == rt)
                     break;
                 paint->parent->color = !(paint->parent->color);
                 paint->parent = paint->parent->parent;
             }
             while (1);
         }
-        // void retation
+        void    right_rotation(RedBlackTree<type_name> **root)
+        {
+            RedBlackTree<type_name> *roottmp = *root;
+            *root = (*root)->left;
+            RedBlackTree<type_name> *righttmp = (*root)->right;
+            (*root)->right = roottmp;
+            roottmp->left = righttmp;
+            (*root)->color = black;
+            (*root)->left->color = red;
+            (*root)->right->color = red;
+        }
+        void    left_rotation(RedBlackTree<type_name> **root)
+        {
+            RedBlackTree<type_name> *roottmp = *root;
+            *root = (*root)->right;
+            RedBlackTree<type_name> *righttmp = (*root)->left;
+            (*root)->left = roottmp;
+            roottmp->right = righttmp;
+            (*root)->color = black;
+            (*root)->left->color = red;
+            (*root)->right->color = red;
+        }
         void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
         {
             if (*head == NULL)
@@ -108,14 +129,30 @@ namespace ft
                    if ((*head)->parent->left && (*head)->parent->left->color == red)
                         recoloring((*head)->parent);
                    else
-                        rotation((*head)->parent);
+                   {
+                        if (((*head)->parent)->right->right)
+                            left_rotation(head);
+                        else
+                        {
+                         right_rotation(head);
+                         left_rotation(head);
+                        }
+                   }
                }
                else
                {
                     if ((*head)->parent->left && (*head)->parent->left->color == red)
                         recoloring((*head)->parent);
                     else
-                        rotation((*head)->parent);
+                    {
+                        if (((*head)->parent)->right->right)
+                            right_rotation(head);
+                        else
+                        {
+                            left_rotation(head);
+                            right_rotation(head);
+                        }
+                    }
                }
             }
         }
@@ -123,7 +160,7 @@ namespace ft
             RBT() : head(NULL), size(0) {}
             void insert(type_name value)
             {
-                insert(&head, newnode(value), root);
+                insert(&head, newnode(value), rt);
                 size++;
             }
     };
