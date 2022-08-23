@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/23 22:46:06 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/23 22:57:49 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,13 @@ namespace ft
         void    recoloring(RedBlackTree<type_name> *paint)
         {
             if (paint->left)
-                paint->left->color = !(paint->left->color);
+                paint->left->color = red;
             if (paint->right)
-                paint->right->color = !(paint->right->color);
+                paint->right->color = red;
             if (paint->position == rt)
                 return ;
-            // paint->color = !(paint->color);
-            recoloring(paint->parent);
+            paint->color = black;
+            // recoloring(paint->parent);
         }
         //      void    right_rotation(RedBlackTree<type_name> **root)
         // {
@@ -239,11 +239,11 @@ namespace ft
             if ((*head)->position == r) // parent
             {
                 if ((*head)->parent->left && (*head)->parent->left->color == red)
-                    return puts("recoloring"), recoloring((*head)->parent);
+                    return puts("recoloring"), recoloring(*head);
                 return puts("balancing"), balancing(&((*head)->parent), (*head)->position);
             }
             if ((*head)->parent->right && (*head)->parent->right->color == red)
-                return recoloring((*head)->parent);
+                return recoloring(*head);
             balancing(&((*head)->parent), (*head)->position);  
         }
         void    printing(RedBlackTree<type_name> *root, int level)
