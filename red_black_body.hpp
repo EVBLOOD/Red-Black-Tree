@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/24 22:07:34 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/24 22:22:10 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ namespace ft
         RedBlackTree<type_name> *head;
         cmpfun                  cmpr;
         size_amount             size;
-        RedBlackTree<type_name> *ROOT;
+        // RedBlackTree<type_name> *ROOT;
         
         
         RedBlackTree<type_name> *newnode(type_name value)
@@ -109,50 +109,6 @@ namespace ft
                 B->left->parent = B;
             //end
         }
-        
-        // void    right_rotation(RedBlackTree<type_name> **root)
-        // {
-        //     // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
-        //     type_name tmprtval = (*root)->value;
-        //     (*root)->value = (*root)->left->value;
-        //     (*root)->left->value = tmprtval;
-
-
-        //     RedBlackTree<type_name> *A = (*root); // the new root
-        //     RedBlackTree<type_name> *B = (*root)->left; // the new left --> must change it's position and parent
-        //     RedBlackTree<type_name> *C = B->left; // the new left --> must change it's position and parent
-        //     RedBlackTree<type_name> *Aright = A->right; // in case of extra wieghts in right of old root
-
-        //     A->right = B;
-        //     // start : changing color to red + position to the new one and parent also
-        //     B->position = l;
-        //     B->parent = A;
-        //     B->color = red;
-        //     // end
-
-        //     A->left = C;
-        //     // start : changing color to red + position to the new one and parent also
-        //     if (C) // in case of using it just as part of {rotate right + rotate left} 
-        //     {
-        //         C->position = r;
-        //         C->parent = A;
-        //         C->color = red;
-        //     }
-        //     // end
-            
-        //     B->left = B->right; // returning to the normal order to sqp the problem made while changing values of ex root and new one!
-        //     if (B->left)
-        //     {
-        //         B->left->parent = B;
-        //         B->left->position = r;
-        //     }
-
-        //     B->right = Aright;
-        //     // start : keeping lbrahch undercontrole!
-        //     if (Aright)
-        //         B->right->parent = B;
-        //     //end
-        // }
         void    right_rotation(RedBlackTree<type_name> **root)
         {
             type_name tmprootvalue = (*root)->value;
@@ -183,17 +139,14 @@ namespace ft
         {
             if (position == r)
             {
-                puts("right");
                 if ((*head)->right->right)
-                    return puts("right right"), left_rotation(head);
+                    return left_rotation(head);
                 right_rotation(&((*head)->right));
                 left_rotation(head);
-                puts("right left");
                 return;
             }
             if ((*head)->left->left)
-                return puts("left left"), right_rotation(head);
-            puts("left right");
+                return right_rotation(head);
             left_rotation(&((*head)->left));
             right_rotation(head);
         }
@@ -203,39 +156,39 @@ namespace ft
                 return (l);
             return r;
         }
-        void debug()
-        {
-            if (this->size != 0)
-            {
-                std::queue<std::pair<RedBlackTree<type_name> *, int> >  kyou;
-                kyou.push(std::make_pair(ROOT, 0));
-                while(kyou.size())
-                {
-                    std::pair<RedBlackTree<type_name>*, int>  front = kyou.front();
-                    kyou.pop();
-                    for (int i = 0; i < front.second; i++)
-                        std::cout << "-";
-                    std::cout << " ";
-                    std::cout << front.first->value << " " << front.first->color << " "<< front.first->position << " " << front.first->parent << std::endl;
-                    if (front.first->left)
-                        kyou.push(std::make_pair(front.first->left, front.second+1));
-                    if (front.first->right)
-                        kyou.push(std::make_pair(front.first->right, front.second+1));
-                }
-            }
-            std::cout <<"-------------------------------" << std::endl;
-        }
+        // this part of code was writen by a student in 1337 and I'm leaving it here cause I appreciate his help!
+        // void debug()
+        // {
+        //     if (this->size != 0)
+        //     {
+        //         std::queue<std::pair<RedBlackTree<type_name> *, int> >  kyou;
+        //         kyou.push(std::make_pair(ROOT, 0));
+        //         while(kyou.size())
+        //         {
+        //             std::pair<RedBlackTree<type_name>*, int>  front = kyou.front();
+        //             kyou.pop();
+        //             for (int i = 0; i < front.second; i++)
+        //                 std::cout << "-";
+        //             std::cout << " ";
+        //             std::cout << front.first->value << " " << front.first->color << " "<< front.first->position << " " << front.first->parent << std::endl;
+        //             if (front.first->left)
+        //                 kyou.push(std::make_pair(front.first->left, front.second+1));
+        //             if (front.first->right)
+        //                 kyou.push(std::make_pair(front.first->right, front.second+1));
+        //         }
+        //     }
+        //     std::cout <<"-------------------------------" << std::endl;
+        // }
         void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
         {
             if (*head == NULL)
             {
-                if (position == rt)
-                    ROOT = nv;
+                // if (position == rt)
+                //     ROOT = nv;
                 *head = nv;
                 nv->position = position;
                 if (position == rt)
                     nv->color = black;
-                debug();
                 return;
             }
             if (cmpr(nv->value, (*head)->value))
@@ -247,33 +200,10 @@ namespace ft
             if ((*head)->right)
                 (*head)->right->parent = *head;
             if ((*head)->color == black)
-            {
-                debug();
                 return;
-            }
-            /*
-                left --> black
-                right --> black 
-    
-                -------------------------
-    
-                left --> red
-                right --> black
-                
-                -------------------------
-    
-                left-> red
-                right -> red
-    
-                -------------------
-    
-                left --> black
-                right ---> red
-            */
-            // if ()
             if (((*head)->left == NULL || (*head)->left->color == black) && ((*head)->right == NULL || (*head)->right->color == black))
                 return;
-            if ((*head)->position == r) // parent
+            if ((*head)->position == r)
             {
                 if ((*head)->parent->left && (*head)->parent->left->color == red)
                 {
@@ -281,11 +211,9 @@ namespace ft
                     if ((*head)->parent->position != rt)
                         (*head)->parent->color = red;
                     (*head)->color = black;
-                    puts("recoloring");
-                    debug();
                     return;
                 }
-                return puts("balancing"), balancing(&((*head)->parent), (*head)->position), debug();
+                return balancing(&((*head)->parent), (*head)->position);
             }
             if ((*head)->parent->right && (*head)->parent->right->color == red)
             {
@@ -293,13 +221,9 @@ namespace ft
                 if ((*head)->parent->position != rt)
                     (*head)->parent->color = red;
                 (*head)->color = black;
-                puts("recoloring");
-                debug();
                 return;
             }
-            puts("balancing");
-            balancing(&((*head)->parent), (*head)->position);  
-            debug();
+            balancing(&((*head)->parent), (*head)->position);
         }
         void    printing(RedBlackTree<type_name> *root, int level)
         {
@@ -330,6 +254,10 @@ namespace ft
             void  printing()
             {
                 printing(this->head, 0);
+            }
+            size_amount lengh()
+            {
+                return size;
             }
     };
 }
