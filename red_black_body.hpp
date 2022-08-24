@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/24 19:09:38 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/24 22:07:34 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,96 +66,6 @@ namespace ft
                 return a;
             return b;
         }
-        // size_amount hight(RedBlackTree<type_name> *head)
-        // {
-        //     if (head == NULL)
-        //         return 0;
-        //     if (head->color == false)
-        //         return max(hight(head->color), hight(head->right)) + 1;
-        //     return max(hight(head->color), hight(head->right));
-        // }
-        // void    recoloring(RedBlackTree<type_name> *a, RedBlackTree<type_name> *b)
-        // {
-        //     /*if (a == b)
-        //         return ;
-        //     if (paint->left)
-        //         paint->left->color = !(paint->left->color);
-        //     if (paint->right)
-        //         paint->right->color = !(paint->right->color);*/
-        //     // if (paint->left)
-        //     //     paint->left->color = black;
-        //     // if (paint->right)
-        //     //     paint->right->color = black;
-        //     // if (corr->left)
-        //     //     if (corr->left->value == value)
-        //     //     {
-        //     //         corr->left->color = red;
-        //     //         return ;
-        //     //     }
-        //     // if (corr->right)
-        //     //     if (corr->right->value == value)
-        //     //         corr->right->color = red;
-        //     // if (paint->position == rt)
-        //     //     return ;
-        //     // paint->color = !(paint->color);
-        //     //recoloring(paint->parent);
-        // }
-        //      void    right_rotation(RedBlackTree<type_name> **root)
-        // {
-        //     RedBlackTree<type_name> *roottmp = *root;
-        //     *root = (*root)->left;
-        //     RedBlackTree<type_name> *righttmp = (*root)->right;
-        //     (*root)->right = roottmp;
-        //     roottmp->left = righttmp;
-        // }
-        // void    left_rotation(RedBlackTree<type_name> **root)
-        // {
-        //     RedBlackTree<type_name> *roottmp = *root;
-        //     *root = (*root)->right;
-        //     RedBlackTree<type_name> *righttmp = (*root)->left;
-        //     (*root)->left = roottmp;
-        //     roottmp->right = righttmp;
-        // }
-        // void    right_rotation(RedBlackTree<type_name> **root)
-        // {
-        //     RedBlackTree<type_name> *roottmp = *root;
-        //     *root = (*root)->left; // new root
-        //     (*root)->parent = roottmp->parent;
-        //     (*root)->position = roottmp->position;
-        //     RedBlackTree<type_name> *righttmp = (*root)->right;
-        //     (*root)->right = roottmp; //new right is ex root
-        //     if (roottmp)
-        //     {
-        //         roottmp->parent = *root;
-        //         roottmp->position = r;
-        //     }
-        //     roottmp->left = righttmp; // new left for right to keep childs
-        //     if (righttmp)
-        //     {
-        //         righttmp->position = l;
-        //         righttmp->parent = roottmp;
-        //     }
-        // }
-        // void    left_rotation(RedBlackTree<type_name> **root) // deleted all coloring shit
-        // {
-        //     RedBlackTree<type_name> *roottmp = *root;
-        //     *root = (*root)->right; // new root
-        //     (*root)->position = roottmp->position;
-        //     (*root)->parent = roottmp->parent;
-        //     RedBlackTree<type_name> *righttmp = (*root)->left;
-        //     (*root)->left = roottmp; // new left is the old root
-        //     if (roottmp)
-        //     {
-        //         (*root)->left->parent = *root;
-        //         roottmp->position = l;
-        //     }
-        //     roottmp->right = righttmp; // new right is the old left of the first left
-        //     if (righttmp)
-        //     {
-        //         righttmp->position = r;
-        //         righttmp->parent = roottmp;
-        //     }
-        // }
         void    left_rotation(RedBlackTree<type_name> **root)
         {
             // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
@@ -194,42 +104,55 @@ namespace ft
             }
 
             B->left = Aleft;
-            // start : position to the new one and parent also
+            // start : keeping lbrahch undercontrole!
             if (Aleft)
                 B->left->parent = B;
-            // RedBlackTree<type_name> *tmpright = (*root)->right;
-            // (*root)->right = (*root)->right->right;
-            // // do not forget pos and parent
-
-            // RedBlackTree<type_name> tmpleft = (*root)->left;
-            // (*root)->left = tmpright;
-            // // same asidi
-
-            // RedBlackTree<type_name> tmp = (*root)->left;
-            // type_name tmprootvalue = (*root)->value;
-            // (*root)->value = (*root)->right->value;
-            // (*root)->right->value = tmprootvalue;
-            // RedBlackTree<type_name> *tmpright = (*root)->right;
-            // (*root)->right = (*root)->right->right;
-            // if ((*root)->right)
-            // {
-            //     (*root)->right->position = r;
-            //     (*root)->right->parent = *root;
-            // }
-            // RedBlackTree<type_name> *leftwight = (*root)->left;
-            // (*root)->left = tmpright;
-            // if ((*root)->left)
-            // {
-            //     (*root)->left->position = l;
-            //     (*root)->left->parent = *root;
-            // }
-            // tmpright->left = leftwight;
-            // if (leftwight)
-            // {
-            //     leftwight->parent = tmpright;
-            //     leftwight->position = l;
-            // }
+            //end
         }
+        
+        // void    right_rotation(RedBlackTree<type_name> **root)
+        // {
+        //     // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
+        //     type_name tmprtval = (*root)->value;
+        //     (*root)->value = (*root)->left->value;
+        //     (*root)->left->value = tmprtval;
+
+
+        //     RedBlackTree<type_name> *A = (*root); // the new root
+        //     RedBlackTree<type_name> *B = (*root)->left; // the new left --> must change it's position and parent
+        //     RedBlackTree<type_name> *C = B->left; // the new left --> must change it's position and parent
+        //     RedBlackTree<type_name> *Aright = A->right; // in case of extra wieghts in right of old root
+
+        //     A->right = B;
+        //     // start : changing color to red + position to the new one and parent also
+        //     B->position = l;
+        //     B->parent = A;
+        //     B->color = red;
+        //     // end
+
+        //     A->left = C;
+        //     // start : changing color to red + position to the new one and parent also
+        //     if (C) // in case of using it just as part of {rotate right + rotate left} 
+        //     {
+        //         C->position = r;
+        //         C->parent = A;
+        //         C->color = red;
+        //     }
+        //     // end
+            
+        //     B->left = B->right; // returning to the normal order to sqp the problem made while changing values of ex root and new one!
+        //     if (B->left)
+        //     {
+        //         B->left->parent = B;
+        //         B->left->position = r;
+        //     }
+
+        //     B->right = Aright;
+        //     // start : keeping lbrahch undercontrole!
+        //     if (Aright)
+        //         B->right->parent = B;
+        //     //end
+        // }
         void    right_rotation(RedBlackTree<type_name> **root)
         {
             type_name tmprootvalue = (*root)->value;
