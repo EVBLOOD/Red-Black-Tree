@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/23 10:53:44 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/23 23:10:09 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/24 17:05:01 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,11 @@ int main()
     x.insert(5);
     x.insert(20);
     x.insert(15);
-    // x.insert(16);
-    // x.insert(17);
-    // x.insert(15);
+    x.insert(16);
+    x.insert(12);
+    x.insert(11);
+    x.insert(19);
+    x.insert(18);
+    x.insert(17);
     x.printing();
 }

@@ -6,11 +6,12 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/23 23:19:49 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/24 16:41:09 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+#include <queue>
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
@@ -49,6 +50,8 @@ namespace ft
         RedBlackTree<type_name> *head;
         cmpfun                  cmpr;
         size_amount             size;
+        RedBlackTree<type_name> *ROOT;
+        
         
         RedBlackTree<type_name> *newnode(type_name value)
         {
@@ -71,8 +74,14 @@ namespace ft
         //         return max(hight(head->color), hight(head->right)) + 1;
         //     return max(hight(head->color), hight(head->right));
         // }
-        void    recoloring(RedBlackTree<type_name> *paint)
+        void    recoloring(RedBlackTree<type_name> *a, RedBlackTree<type_name> *b)
         {
+            /*if (a == b)
+                return ;
+            if (paint->left)
+                paint->left->color = !(paint->left->color);
+            if (paint->right)
+                paint->right->color = !(paint->right->color);*/
             // if (paint->left)
             //     paint->left->color = black;
             // if (paint->right)
@@ -86,10 +95,10 @@ namespace ft
             // if (corr->right)
             //     if (corr->right->value == value)
             //         corr->right->color = red;
-            if (paint->position == rt)
-                return ;
+            // if (paint->position == rt)
+            //     return ;
             // paint->color = !(paint->color);
-            recoloring(paint->parent);
+            //recoloring(paint->parent);
         }
         //      void    right_rotation(RedBlackTree<type_name> **root)
         // {
@@ -223,37 +232,103 @@ namespace ft
                 return (l);
             return r;
         }
+        void debug()
+        {
+            if (this->size != 0)
+            {
+                std::queue<std::pair<RedBlackTree<type_name> *, int> >  kyou;
+                kyou.push(std::make_pair(ROOT, 0));
+                while(kyou.size())
+                {
+                    std::pair<RedBlackTree<type_name>*, int>  front = kyou.front();
+                    kyou.pop();
+                    for (int i = 0; i < front.second; i++)
+                        std::cout << "-";
+                    std::cout << " ";
+                    std::cout << front.first->value << " " << front.first->color << " "<< front.first->position << " " << front.first->parent << std::endl;
+                    if (front.first->left)
+                        kyou.push(std::make_pair(front.first->left, front.second+1));
+                    if (front.first->right)
+                        kyou.push(std::make_pair(front.first->right, front.second+1));
+                }
+            }
+            std::cout <<"-------------------------------" << std::endl;
+        }
         void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
         {
             if (*head == NULL)
             {
                 if (position == rt)
-                    puts("1");
+                    ROOT = nv;
                 *head = nv;
                 nv->position = position;
                 if (position == rt)
                     nv->color = black;
+                debug();
                 return;
             }
             if (cmpr(nv->value, (*head)->value))
-                std::cout << ("left ") << (*head)->value << " " << nv->value << '\n'    , insert(&((*head)->left), nv, l);
+                insert(&((*head)->left), nv, l);
             else
-                std::cout << ("right ") << (*head)->value << " " << nv->value << '\n'    , insert(&((*head)->right), nv, r);
+                insert(&((*head)->right), nv, r);
             if ((*head)->left)
                 (*head)->left->parent = *head;
             if ((*head)->right)
                 (*head)->right->parent = *head;
             if ((*head)->color == black)
+            {
+                debug();
+                return;
+            }
+            /*
+                left --> black
+                right --> black 
+    
+                -------------------------
+    
+                left --> red
+                right --> black
+                
+                -------------------------
+    
+                left-> red
+                right -> red
+    
+                -------------------
+    
+                left --> black
+                right ---> red
+            */
+            // if ()
+            if (((*head)->left == NULL || (*head)->left->color == black) && ((*head)->right == NULL || (*head)->right->color == black))
                 return;
             if ((*head)->position == r) // parent
             {
                 if ((*head)->parent->left && (*head)->parent->left->color == red)
-                    return puts("recoloring"), recoloring((*head)->parent);
-                return puts("balancing"), balancing(&((*head)->parent), (*head)->position);
+                {
+                    (*head)->parent->left->color = black;
+                    if ((*head)->parent->position != rt)
+                        (*head)->parent->color = red;
+                    (*head)->color = black;
+                    puts("recoloring");
+                    debug();
+                    return;
+                }
+                return puts("balancing"), balancing(&((*head)->parent), (*head)->position), debug();
             }
             if ((*head)->parent->right && (*head)->parent->right->color == red)
-                return recoloring((*head)->parent);
+            {
+                (*head)->parent->right->color = black;
+                if ((*head)->parent->position != rt)
+                    (*head)->parent->color = red;
+                (*head)->color = black;
+                puts("recoloring");
+                debug();
+                return;
+            }
+            puts("balancing");
             balancing(&((*head)->parent), (*head)->position);  
+            debug();
         }
         void    printing(RedBlackTree<type_name> *root, int level)
         {
