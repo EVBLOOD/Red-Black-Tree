@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/26 12:32:39 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/26 12:35:31 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,7 +264,7 @@ namespace ft
                 std::cout << "color: black ";
             std::cout << " | the number: " << root->value << "\n";
         }
-        // checker
+        // checker {made by: jalalium}
         bool check(RedBlackTree<type_name>* node, std::map<RedBlackTree<type_name>* , std::vector<int> > &mp)
 		{
 			bool ok = true;
