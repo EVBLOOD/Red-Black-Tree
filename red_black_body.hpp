@@ -6,12 +6,16 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/24 22:22:10 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/26 12:32:39 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+// for ckecker
 #include <queue>
+#include <vector>
+#include <map>
+// end
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
@@ -58,6 +62,8 @@ namespace ft
             RedBlackTree<T> *newnode = ac.allocate(1);
             newnode->value = value;
             newnode->color = red;
+            newnode->left = NULL;
+            newnode->right = NULL;
             return newnode;
         }
         size_amount max(size_amount a, size_amount b)
@@ -66,13 +72,14 @@ namespace ft
                 return a;
             return b;
         }
-        void    left_rotation(RedBlackTree<type_name> **root)
+                void    left_rotation(RedBlackTree<type_name> **root, bool clr)
         {
             // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
             type_name tmprtval = (*root)->value;
             (*root)->value = (*root)->right->value;
             (*root)->right->value = tmprtval;
-
+            if (clr)
+                (*root)->color = black;
 
             RedBlackTree<type_name> *A = (*root); // the new root
             RedBlackTree<type_name> *B = (*root)->right; // the new left --> must change it's position and parent
@@ -83,7 +90,8 @@ namespace ft
             // start : changing color to red + position to the new one and parent also
             B->position = l;
             B->parent = A;
-            B->color = red;
+            if (clr)
+                B->color = red;
             // end
 
             A->right = C;
@@ -92,7 +100,8 @@ namespace ft
             {
                 C->position = r;
                 C->parent = A;
-                C->color = red;
+                if (clr)
+                    C->color = red;
             }
             // end
             
@@ -109,46 +118,57 @@ namespace ft
                 B->left->parent = B;
             //end
         }
-        void    right_rotation(RedBlackTree<type_name> **root)
+        void    right_rotation(RedBlackTree<type_name> **root, bool clr)
         {
             type_name tmprootvalue = (*root)->value;
             (*root)->value = (*root)->left->value;
             (*root)->left->value = tmprootvalue;
-            RedBlackTree<type_name> *tmpleft = (*root)->left;
-            (*root)->left = (*root)->left->left;
-            if ((*root)->left)
+
+            RedBlackTree<type_name> *A = (*root);
+            RedBlackTree<type_name> *B = A->left;
+            RedBlackTree<type_name> *C = B->left;
+
+            RedBlackTree<type_name> *keepAright = A->right;
+            A->right = B;
+            if (clr)
+                A->color = black;
+            
+            B->position = r;
+            B->parent = A;
+            if (clr)
+                B->color = red;
+            
+            A->left = C;
+            if (C)
             {
-                (*root)->left->position = l;
-                (*root)->left->parent = *root;
+                C->parent = A;
+                if (clr)
+                    C->color = red;
+                C->position = l;
             }
-            RedBlackTree<type_name> *rightwight = (*root)->right;
-            (*root)->right = tmpleft;
-            if ((*root)->right)
-            {
-                (*root)->right->position = r;
-                (*root)->right->parent = *root;
-            }
-            tmpleft->left = rightwight;
-            if (rightwight)
-            {
-                rightwight->parent = tmpleft;
-                rightwight->position = l;
-            }
+            
+            B->left = B->right;
+            if (B->left)
+                B->left->position = l;
+            B->right = keepAright;
+            if (keepAright)
+                keepAright->parent = B;
+            
         }
-        void    balancing(RedBlackTree<type_name> **head, int position)
+        void    balancing(RedBlackTree<type_name> **head, int position, RedBlackTree<type_name> *cerr)
         {
             if (position == r)
             {
-                if ((*head)->right->right)
-                    return left_rotation(head);
-                right_rotation(&((*head)->right));
-                left_rotation(head);
+                if ((*head)->right->right && (cerr->right->color == red || !cerr->left))
+                    return left_rotation(head, true);
+                right_rotation(&((*head)->right), false);
+                left_rotation(head, true);
                 return;
             }
-            if ((*head)->left->left)
-                return right_rotation(head);
-            left_rotation(&((*head)->left));
-            right_rotation(head);
+            if ((*head)->left->left && (cerr->left->color == red || !cerr->right))
+                return right_rotation(head, true);
+            left_rotation(&((*head)->left), false);
+            right_rotation(head, true);
         }
         int    recentlyadded(RedBlackTree<type_name> *x, type_name value)
         {
@@ -213,7 +233,7 @@ namespace ft
                     (*head)->color = black;
                     return;
                 }
-                return balancing(&((*head)->parent), (*head)->position);
+                return balancing(&((*head)->parent), (*head)->position, *head);
             }
             if ((*head)->parent->right && (*head)->parent->right->color == red)
             {
@@ -223,7 +243,7 @@ namespace ft
                 (*head)->color = black;
                 return;
             }
-            balancing(&((*head)->parent), (*head)->position);
+            balancing(&((*head)->parent), (*head)->position, *head);
         }
         void    printing(RedBlackTree<type_name> *root, int level)
         {
@@ -244,11 +264,70 @@ namespace ft
                 std::cout << "color: black ";
             std::cout << " | the number: " << root->value << "\n";
         }
+        // checker
+        bool check(RedBlackTree<type_name>* node, std::map<RedBlackTree<type_name>* , std::vector<int> > &mp)
+		{
+			bool ok = true;
+			if (node->left != NULL)
+			{
+				if (node->value <= node->left->value)
+				{
+					std::cout << "LEFT CHILD LARGER OR EQUAL TO PARENT " << node->value << " " << node->left->value << std::endl;
+					return false;
+				}
+				if (node->color == red && node->left->color == red)
+				{
+					std::cout << "RED PARENT WITH RED CHILD: " << node->value << " " << node->left->value << std::endl;
+					return false;
+				}
+				ok &= check(node->left,mp);
+			}
+			if (node->right != NULL)
+			{
+				if (node->value >= node->right->value)
+				{
+					std::cout << "RIGHT CHILD SMALLER OR EQUAL TO PARENT " << node->value << " " << node->left->value << std::endl;
+					return false;
+				}
+				if (node->color == red && node->right->color == red)
+				{
+					std::cout << "RED PARENT WITH RED CHILD: " << node->value << " " << node->right->value << std::endl;
+					return false;
+				}
+				ok &= check(node->right,mp);
+			}
+			std::vector<int> tmp;
+			if (node->left != NULL)
+			{
+				for (int z : mp[node->left])
+					tmp.push_back(z);
+			}
+			else
+				tmp.push_back(0);
+			if (node->right != NULL)
+			{
+				for (int z : mp[node->right])
+					tmp.push_back(z);
+			}
+			else
+				tmp.push_back(0);
+			std::sort(tmp.begin(), tmp.end());
+			for (int &z : tmp)
+				z += (node->color == black);
+			mp[node] = tmp;
+			return (ok &(tmp[0] == tmp.back()));
+		}
+        // end of checker!
         public:
             RBT() : head(NULL), size(0) {}
             void insert(type_name value)
             {
                 insert(&head, newnode(value), rt);
+                // checking time!
+                std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
+				assert(check(head, mp));
+                std::cout << "INSERTED " << value << " SUCCESSFULLY" << std::endl;
+                // end of check!
                 size++;
             }
             void  printing()
