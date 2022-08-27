@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/23 10:53:44 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/27 13:24:12 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/27 20:31:19 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ int main()
     // x.insert(21);
     // x.insert(13);
     // x.insert(37);
-    x.printing();
+    // x.printing();
     int i = 0;
     for (int z : v)
     {
-      // if (i == 3)
-      //   break;
+      if (i == 3)
+        break;
 		  x.remove(z); 
-      x.printing();
+      // x.printing();
       i++;
     }
       x.printing();

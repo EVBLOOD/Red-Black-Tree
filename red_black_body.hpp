@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/27 20:29:31 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/27 20:31:26 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -432,7 +432,6 @@ namespace ft
                     std::cout << element << " SUCCESSFULLY DELETED! " << std::endl;
                     return;
                 }
-                printing(head, 0);
                 std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
 				assert(check(head, mp));
                 std::cout << element << " SUCCESSFULLY DELETED! " << std::endl;
