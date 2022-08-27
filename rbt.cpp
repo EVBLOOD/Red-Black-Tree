@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/23 10:53:44 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/26 12:39:31 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/27 13:24:12 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ int main()
     // generating random numbers also {made by: jalalium}
     std::set<int> st;
 	srand(time(0));
-	while(st.size() < 10000)
+	while(st.size() < 10)
 	{
-		st.insert(rand()%100000);
+		st.insert(rand()%100);
 	}
 	std::vector<int> v(st.begin(), st.end());
 	random_shuffle(v.begin(), v.end());
@@ -59,4 +59,14 @@ int main()
     // x.insert(13);
     // x.insert(37);
     x.printing();
+    int i = 0;
+    for (int z : v)
+    {
+      // if (i == 3)
+      //   break;
+		  x.remove(z); 
+      x.printing();
+      i++;
+    }
+      x.printing();
 }

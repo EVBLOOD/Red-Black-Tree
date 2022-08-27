@@ -6,12 +6,13 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/26 12:35:31 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/27 20:16:36 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 // for ckecker
+#include <cstddef>
 #include <queue>
 #include <vector>
 #include <map>
@@ -64,6 +65,7 @@ namespace ft
             newnode->color = red;
             newnode->left = NULL;
             newnode->right = NULL;
+            newnode->parent = NULL;
             return newnode;
         }
         size_amount max(size_amount a, size_amount b)
@@ -72,7 +74,7 @@ namespace ft
                 return a;
             return b;
         }
-                void    left_rotation(RedBlackTree<type_name> **root, bool clr)
+        void    left_rotation(RedBlackTree<type_name> **root, bool clr)
         {
             // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
             type_name tmprtval = (*root)->value;
@@ -144,6 +146,89 @@ namespace ft
                 C->parent = A;
                 if (clr)
                     C->color = red;
+                C->position = l;
+            }
+            
+            B->left = B->right;
+            if (B->left)
+                B->left->position = l;
+            B->right = keepAright;
+            if (keepAright)
+                keepAright->parent = B;
+            
+        }
+               void    left_rotationdel(RedBlackTree<type_name> **root, bool clr)
+        {
+            // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
+            type_name tmprtval = (*root)->value;
+            (*root)->value = (*root)->right->value;
+            (*root)->right->value = tmprtval;
+            if (clr)
+                (*root)->color = red;
+
+            RedBlackTree<type_name> *A = (*root); // the new root
+            RedBlackTree<type_name> *B = (*root)->right; // the new left --> must change it's position and parent
+            RedBlackTree<type_name> *C = B->right; // the new right --> must change it's position and parent
+            RedBlackTree<type_name> *Aleft = A->left; // in case of extra wieghts in left of old root
+
+            A->left = B;
+            // start : changing color to red + position to the new one and parent also
+            B->position = l;
+            B->parent = A;
+            if (clr)
+                B->color = black;
+            // end
+
+            A->right = C;
+            // start : changing color to red + position to the new one and parent also
+            if (C) // in case of using it just as part of {rotate left + rotate right} 
+            {
+                C->position = r;
+                C->parent = A;
+                if (clr)
+                    C->color = black;
+            }
+            // end
+            
+            B->right = B->left; // returning to the normal order to sqp the problem made while changing values of ex root and new one!
+            if (B->right)
+            {
+                B->right->parent = B;
+                B->right->position = r;
+            }
+
+            B->left = Aleft;
+            // start : keeping lbrahch undercontrole!
+            if (Aleft)
+                B->left->parent = B;
+            //end
+        }
+        void    right_rotationdel(RedBlackTree<type_name> **root, bool clr)
+        {
+            type_name tmprootvalue = (*root)->value;
+            (*root)->value = (*root)->left->value;
+            (*root)->left->value = tmprootvalue;
+
+            RedBlackTree<type_name> *A = (*root);
+            RedBlackTree<type_name> *B = A->left;
+            RedBlackTree<type_name> *C = B->left;
+
+            RedBlackTree<type_name> *keepAright = A->right;
+            A->right = B;
+            if (clr)
+                A->color = red;
+            
+            B->position = r;
+            B->parent = A;
+            if (clr)
+                B->color = black;
+            
+            A->left = C;
+            if (C)
+            {
+                C->parent = A;
+                if (clr)
+                    C->color = black;
                 C->position = l;
             }
             
@@ -318,6 +403,146 @@ namespace ft
 			return (ok &(tmp[0] == tmp.back()));
 		}
         // end of checker!
+        type_name thedeepest(RedBlackTree<type_name> *head)
+        {
+            if (head->right == NULL)
+                return head->value;
+            return thedeepest(head->right);
+        }
+        void remove(RedBlackTree<type_name> **head, type_name element)
+        {
+            if (*head == NULL)
+                return;
+            if (cmpr(element, (*head)->value))
+                remove(&((*head)->left), element);
+            else if (cmpr((*head)->value, element))
+                remove(&((*head)->right), element);
+            else
+            {
+                RedBlackTree<type_name> *target = *head;
+                if (target->left == NULL && target->right == NULL)
+                {
+                    bool color = target->color;
+                    int position = target->position;
+                    RedBlackTree<type_name> **parent = &((*head)->parent);
+                    // ac.destroy(*head);
+                    // ac.dealocate(*head);
+                    *head = NULL;
+                    if (position == rt)
+                        return;
+                    if (color == black)
+                        fixblack(parent, position);
+                    return;
+                }
+                if (target->left == NULL)
+                {
+                    type_name value = target->right->value;
+                    // ac.destroy(&(target->value));
+                    // ac.dealocate(target);
+                    (*head)->value = value;;
+                    remove(&((*head)->right), value);
+                    return;
+                }
+                type_name value = thedeepest(target->left);
+                (*head)->value = value;
+                remove(&((*head)->left), value);
+            }
+        }
+        // void colorsfixing(RedBlackTree<type_name> **head)
+        // {
+        //     if (*head == NULL)
+        //         return;
+        //     colorsfixing(&((*head)->left));
+        //     colorsfixing(&((*head)->right));
+        //     if ((*head)->parent->color == black)
+        //         return;
+        //     if ((*head)->position == l)
+        //     {
+        //         if ((*head)->parent->right && (*head)->parent->right->color == red)
+        //         {
+        //             // recoloring
+        //             (*head)->parent->color = black;
+        //             return;
+        //         }
+        //         // balancing shit
+        //         // balancing(&((*head)->parent->parent), (*head)->parent->position, (*head)->parent);
+        //         return;
+        //     }
+        //     if ((*head)->parent->left && (*head)->parent->left->color == red)
+        //     {
+        //         // recoloring
+        //         (*head)->parent->color = black;
+        //         return;
+        //     }
+        //     // balancing(&((*head)->parent->parent), (*head)->parent->position, (*head)->parent);
+        //     // balancing shit
+        //     return;
+        // }
+        void    balancingdel(RedBlackTree<type_name> **head, int position)
+        {
+            if (position == r)
+            {
+                if ((*head)->right->right)
+                    return left_rotationdel(head, true);
+                right_rotationdel(&((*head)->right), false);
+                left_rotationdel(head, true);
+                return;
+            }
+            if ((*head)->left->left)
+                return right_rotationdel(head, true);
+            left_rotationdel(&((*head)->left), false);
+            right_rotationdel(head, true);
+        }
+        void fixblack(RedBlackTree<type_name> **head, int position)
+        {
+            if (position == rt)
+                return;
+            if (position == r)
+            {
+                if (!((*head)->left) || (*head)->left->color != black)
+                    return;
+                if ((*head)->left->right == NULL && (*head)->left->left == NULL)
+                {
+                    // puts("coloring r");
+                    (*head)->color = black;
+                    (*head)->left->color = red;
+                    return;
+                }
+                    // puts("balancing r");
+                balancingdel(head, l);
+                // colorsfixing(head);
+                // if ((*head)->left || (*head)->right)
+                // {
+                    // puts("start");
+                    // colorsfixing(&((*head)->parent));
+                    // puts("end");
+                // }
+                    // puts("testing the same shit!");
+                return;
+            }
+            if (!((*head)->right) || (*head)->right->color != black)
+                return;
+            if ((*head)->right->right == NULL && (*head)->right->left == NULL)
+            {
+            //  puts("coloring l");
+                (*head)->color = black;
+                (*head)->right->color = red;
+                return ;
+            }
+            //  puts("balancing l");
+            // balancing(&((*head)->parent), (), *head);
+            balancingdel(head, r);
+            // std::cout << "head => " << (*head)->value << std::endl;
+            // if ((*head)->left || (*head)->right)
+            // {
+                // puts("start");
+                // colorsfixing(&((*head)->parent));
+                // puts("end");
+            // }
+                // puts("testing s÷ome shit");
+                // fixblack(head, (*head)->position);
+            // balancing(&(head->parent), position, (*head)->left);
+        }
         public:
             RBT() : head(NULL), size(0) {}
             void insert(type_name value)
@@ -337,6 +562,20 @@ namespace ft
             size_amount lengh()
             {
                 return size;
+            }
+            void remove(type_name element)
+            {
+                std::cout << "the number to delete: " << element << "\n";
+                remove(&head, element);
+                if (head == NULL)
+                {
+                    std::cout << element << " SUCCESSFULLY DELETED! " << std::endl;
+                    return;
+                }
+                printing(head, 0);
+                std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
+				assert(check(head, mp));
+                std::cout << element << " SUCCESSFULLY DELETED! " << std::endl;
             }
     };
 }
