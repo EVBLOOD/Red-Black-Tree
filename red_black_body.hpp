@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/27 20:31:26 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/29 19:28:50 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ namespace ft
         RedBlackTree *parent;
         int           position;
         bool          color; // red == true; black == false
+        bool          DB;
         RedBlackTree() : value(type_name()), left(NULL), right(NULL), parent(NULL), color(red) {}
     };
 
@@ -55,7 +56,7 @@ namespace ft
         RedBlackTree<type_name> *head;
         cmpfun                  cmpr;
         size_amount             size;
-        // RedBlackTree<type_name> *ROOT;
+        RedBlackTree<type_name> *ROOT;
         
         
         RedBlackTree<type_name> *newnode(type_name value)
@@ -66,6 +67,7 @@ namespace ft
             newnode->left = NULL;
             newnode->right = NULL;
             newnode->parent = NULL;
+            newnode->DB = false;
             return newnode;
         }
         size_amount max(size_amount a, size_amount b)
@@ -179,34 +181,34 @@ namespace ft
             return r;
         }
         // this part of code was writen by a student in 1337 and I'm leaving it here cause I appreciate his help!
-        // void debug()
-        // {
-        //     if (this->size != 0)
-        //     {
-        //         std::queue<std::pair<RedBlackTree<type_name> *, int> >  kyou;
-        //         kyou.push(std::make_pair(ROOT, 0));
-        //         while(kyou.size())
-        //         {
-        //             std::pair<RedBlackTree<type_name>*, int>  front = kyou.front();
-        //             kyou.pop();
-        //             for (int i = 0; i < front.second; i++)
-        //                 std::cout << "-";
-        //             std::cout << " ";
-        //             std::cout << front.first->value << " " << front.first->color << " "<< front.first->position << " " << front.first->parent << std::endl;
-        //             if (front.first->left)
-        //                 kyou.push(std::make_pair(front.first->left, front.second+1));
-        //             if (front.first->right)
-        //                 kyou.push(std::make_pair(front.first->right, front.second+1));
-        //         }
-        //     }
-        //     std::cout <<"-------------------------------" << std::endl;
-        // }
+        void debug()
+        {
+            if (this->size != 0)
+            {
+                std::queue<std::pair<RedBlackTree<type_name> *, int> >  kyou;
+                kyou.push(std::make_pair(ROOT, 0));
+                while(kyou.size())
+                {
+                    std::pair<RedBlackTree<type_name>*, int>  front = kyou.front();
+                    kyou.pop();
+                    for (int i = 0; i < front.second; i++)
+                        std::cout << "-";
+                    std::cout << " ";
+                    std::cout << front.first->value << " " << front.first->color << " "<< front.first->position << " " << front.first->parent << " " << front.first << std::endl;
+                    if (front.first->left)
+                        kyou.push(std::make_pair(front.first->left, front.second+1));
+                    if (front.first->right)
+                        kyou.push(std::make_pair(front.first->right, front.second+1));
+                }
+            }
+            std::cout <<"-------------------------------" << std::endl;
+        }
         void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
         {
             if (*head == NULL)
             {
-                // if (position == rt)
-                //     ROOT = nv;
+                if (position == rt)
+                     ROOT = nv;
                 *head = nv;
                 nv->position = position;
                 if (position == rt)
@@ -317,6 +319,13 @@ namespace ft
 			for (int &z : tmp)
 				z += (node->color == black);
 			mp[node] = tmp;
+            if (tmp[0] != tmp.back())
+            {
+                std::cout << "NODE " << node->value << std::endl;
+                for (int z : tmp)
+                    std::cout << z << " ";
+                std::cout << std::endl;
+            }
 			return (ok &(tmp[0] == tmp.back()));
 		}
         // end of checker!
@@ -339,14 +348,15 @@ namespace ft
                 RedBlackTree<type_name> *target = *head;
                 if (target->left == NULL && target->right == NULL)
                 {
-                    bool color = target->color;
-                    int position = target->position;
-                    RedBlackTree<type_name> **parent = &((*head)->parent);
+                    // bool color = target->color;
+                    // int position = target->position;
+                    // RedBlackTree<type_name> **parent = &((*head)->parent);
+                    if (target->color == black)
+                        target->DB = true;
+                    fixdoubleblack(head);
                     ac.destroy(*head);
                     ac.deallocate(*head, 1);
                     *head = NULL;
-                    if (color == black && position != black)
-                        fixblack(parent, position);
                     return;
                 }
                 if (target->left == NULL)
@@ -361,52 +371,82 @@ namespace ft
                 remove(&((*head)->left), value);
             }
         }
-        void    balancingdel(RedBlackTree<type_name> **head, int position)
+        void fixdoubleblack(RedBlackTree<type_name> **head)
         {
-            if (position == r)
+            if ((*head)->position == rt || (*head)->DB != true) // not black || it's root so just a simple "NULL"
+                return;
+            if ((*head)->position == r) // checking the left subl
             {
-                if ((*head)->right->right)
-                    return left_rotation(head, true, true);
-                right_rotation(&((*head)->right), false, true);
-                left_rotation(head, true, true);
+                if (!(*head)->left || (*head)->left->color == black) // black case subling + may also be red childs
+                {
+                    // it will be deleted in future || I'll just delete it;
+                }
                 return;
             }
-            if ((*head)->left->left)
-                return right_rotation(head, true, true);
-            left_rotation(&((*head)->left), false, true);
-            right_rotation(head, true, true);
         }
+        // void    balancingdel(RedBlackTree<type_name> **head, int position, bool test)
+        // {
+        //     if (position == r)
+        //     {
+        //         if ((*head)->right->right)
+        //         {
+                    
+        //         puts ("right right");
+        //             return left_rotation(head, test, test);
+        //         }
+        //         right_rotation(&((*head)->right), !test, test);
+        //         left_rotation(head, test, test);
+        //         return;
+        //     }
+        //     if ((*head)->left->left)
+        //     {
+        //         puts ("left left");
+        //         return right_rotation(head, test, test);
+        //     }
+        //     left_rotation(&((*head)->left), !test, test);
+        //     right_rotation(head, test, test);
+        // }
         void fixblack(RedBlackTree<type_name> **head, int position)
         {
-            if (position == rt)
-                return;
             if (position == r)
             {
-                if (!((*head)->left) || (*head)->left->color != black)
+                if (!((*head)->left))
                     return;
                 if ((*head)->left->right == NULL && (*head)->left->left == NULL)
                 {
+                    puts("coloring");
                     (*head)->color = black;
                     (*head)->left->color = red;
                     return;
                 }
-                balancingdel(head, l);
+                puts("bal");
+                // if ((*head)->left->color != black)
+                    
+                balancingdel(head, (*head)->position, true);
                 return;
             }
-            if (!((*head)->right) || (*head)->right->color != black)
+            if (!((*head)->right))
                 return;
             if ((*head)->right->right == NULL && (*head)->right->left == NULL)
             {
+                 puts("coloring");
                 (*head)->color = black;
                 (*head)->right->color = red;
                 return ;
             }
-            balancingdel(head, r);
+                puts("bal");
+            balancingdel(head, (*head)->position, true);
+            if ((*head)->left->left)
+                fixblack(&((*head)->left->left), (*head)->left->left->position);
+            if ((*head)->left->right)
+                fixblack(&((*head)->left->right), (*head)->left->right->position);
+            std::cout << "ckeck: " << (*head)->value << "\n";
         }
         public:
             RBT() : head(NULL), size(0) {}
             void insert(type_name value)
             {
+                std::cout << head << "\n";
                 insert(&head, newnode(value), rt);
                 // checking time!
                 std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
@@ -426,15 +466,20 @@ namespace ft
             void remove(type_name element)
             {
                 std::cout << "the number to delete: " << element << "\n";
+                // debug();
                 remove(&head, element);
+                printing(head, 0);
+                // printing(head, 0);
                 if (head == NULL)
                 {
                     std::cout << element << " SUCCESSFULLY DELETED! " << std::endl;
                     return;
                 }
+                // debug();
                 std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
 				assert(check(head, mp));
                 std::cout << element << " SUCCESSFULLY DELETED! " << std::endl;
+                size--;
             }
     };
 }

@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/23 10:53:44 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/27 20:31:19 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/28 17:54:36 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,30 @@ int main()
 {
     ft::RBT<int> x;
     // generating random numbers also {made by: jalalium}
-    std::set<int> st;
-	srand(time(0));
-	while(st.size() < 10)
-	{
-		st.insert(rand()%100);
-	}
-	std::vector<int> v(st.begin(), st.end());
-	random_shuffle(v.begin(), v.end());
-    std::cout << " numbers to insert : \n";	
-	for (int z : v)
-		std::cout << z << " " ;	
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    for (int z : v)
-		x.insert(z); 
-    // x.insert(10);
+    // std::set<int> st;
+	  // srand(time(0));
+	  // while(st.size() < 100)
+	  // 	st.insert(rand()%9999);
+	  // std::vector<int> v(st.begin(), st.end());
+	  // random_shuffle(v.begin(), v.end());
+    //   std::cout << " numbers to insert : \n";	
+	  // for (int z : v)
+	  // 	std::cout << z << " " ;	
+    //   std::cout << std::endl;
+    // int i = 0;
+    // for (int z : v)
+    // {
+    //   if (i == 2)
+    //     break;
+    //   x.insert(z);
+    //   i++;
+    // }
+    std::vector<int> ss = {77,76,43,27,8,85,55,63,18,91,57,90,34,25,50,12,88,35,60,84};
+    std::vector<int> rr = {25,60,88,57,77,76,35,12,85,91,63,55,27,84,43,8,18,34,50,90};
+    for (int s : ss)
+      x.insert(s);
+    for (int c : rr)
+      x.remove(c);
     // x.insert(5);
     // x.insert(20);
     // x.insert(15);
@@ -59,14 +66,22 @@ int main()
     // x.insert(13);
     // x.insert(37);
     // x.printing();
-    int i = 0;
-    for (int z : v)
-    {
-      if (i == 3)
-        break;
-		  x.remove(z); 
+    // i = 0;
+    // for (int z : v)
+    // {
+    //   if (i == 2)
+    //     break;
+		//   x.remove(z); 
+    //   v.erase(std::find(v.begin(), v.end(), z));
+    //   i++;
+    // }
+    // i = 0;
+    // for (int z : v)
+    // {
+    //   if (i == 1)
+    //     break;
+    //   x.insert(z);
+    //   i++;
+    // }
       // x.printing();
-      i++;
-    }
-      x.printing();
 }
