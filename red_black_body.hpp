@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/29 19:28:50 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/08/31 12:50:00 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ namespace ft
             }
 
             B->left = Aleft;
-            // start : keeping lbrahch undercontrole!
+            // start : keeping childs undercontrole!
             if (Aleft)
                 B->left->parent = B;
             //end
@@ -371,18 +371,104 @@ namespace ft
                 remove(&((*head)->left), value);
             }
         }
-        void fixdoubleblack(RedBlackTree<type_name> **head)
+        //  /*
+        //             Case 1: The sibling of x is red.
+        //                 we recolor the parent of x and x.sibling then we left rotate around x's parent.
+        //         */
+        //         if ((*head)->left && (*head)->left->color == red)
+        //         {
+        //             (*head)->color = red;
+        //             (*head)->left->color = black; // double black!
+        //             // rotate left the parent {head} left
+        //             return;;
+        //         }
+        //         /*
+        //             Case 2: The sibling of x is black and has two black children.
+        //                 we recolor x.sibling to red, move x upwards to x.parent and check again for this newX.
+        //         */
+        //         if (!((*head)->left) || ((*head)->left->color == black && (!(*head)->left->right ||
+        //             (*head)->left->right->color == black) && (!(*head)->left->left || (*head)->left->left->color == black)))
+        //         {
+        //             if ((*head)->left)
+        //                 (*head)->left->color = red;
+        //             return fixdoubleblack(&((*head)->parent), (*head)->position);
+        //         }
+        //         /*
+        //             Case 3: The sibling of x is black with one black child to the right.
+        //                 In this case, we recolor the sibling to red and sibling.leftChild to black,
+        //                 then we right rotate around the sibling. After this we have case 4.
+        //         */
+        //         if ((*head)->left->color == black && (!(*head)->left->right || (*head)->left->right->color == black))
+        //         {
+        //             (*head)->left->color = red;
+        //             if ((*head)->left->left)
+        //                 (*head)->left->left = red;
+        //             // right rotate sibling
+        //         }
+        //         /*
+        //             Case 4: The sibling of x is black with one red child to the right.
+        //                 we recolor the sibling to the color of x.parent and x.parent and sibling.rightChild to black.
+        //                 Then we left rotate around x.parent.
+        //         */
+        //         (*head)->left->color = (*head)->color;
+        //         (*head)->color = black;
+        //         (*head)->left->right = black;
+        //         // left rotate parent (*head);
+        void fixcase(RedBlackTree<type_name> **head, RedBlackTree<type_name> *sibling)
         {
-            if ((*head)->position == rt || (*head)->DB != true) // not black || it's root so just a simple "NULL"
-                return;
-            if ((*head)->position == r) // checking the left subl
-            {
-                if (!(*head)->left || (*head)->left->color == black) // black case subling + may also be red childs
+                          /*
+                    Case 1: The sibling of x is red.
+                        we recolor the parent of x and x.sibling then we left rotate around x's parent.
+                */
+                if (sibling && sibling->color == red)
                 {
-                    // it will be deleted in future || I'll just delete it;
+                    (*head)->color = red;
+                    sibling->color = black;
+                    // rotate left the parent {head} left
+                    return;;
                 }
+                /*
+                    Case 2: The sibling of x is black and has two black children.
+                        we recolor x.sibling to red, move x upwards to x.parent and check again for this newX.
+                */
+                if (!(sibling) || (sibling->color == black && (!sibling->right ||
+                    sibling->right->color == black) && (!sibling->left || sibling->left->color == black)))
+                {
+                    if (sibling)
+                        sibling->color = red;
+                    return fixdoubleblack(&((*head)->parent), (*head)->sibling);
+                }
+                /*
+                    Case 3: The sibling of x is black with one black child to the right.
+                        In this case, we recolor the sibling to red and sibling.leftChild to black,
+                        then we right rotate around the sibling. After this we have case 4.
+                */
+                if (sibling->color == black && (!sibling->right || sibling->right->color == black))
+                {
+                    sibling->color = red;
+                    if (sibling->left)
+                        sibling->left = red;
+                    // right rotate sibling
+                }
+                /*
+                    Case 4: The sibling of x is black with one red child to the right.
+                        we recolor the sibling to the color of x.parent and x.parent and sibling.rightChild to black.
+                        Then we left rotate around x.parent.
+                */
+                sibling->color = (*head)->color;
+                (*head)->color = black;
+                sibling->right = black;
+                // left rotate parent (*head);
+        }
+        void fixdoubleblack(RedBlackTree<type_name> **head, int position)
+        {
+            if ((*head)->position == rt)
                 return;
+            if (position == r) // checking the left subl
+            {
+                return fixcase(head, (*head)->left);
             }
+            fixcase(head, (*head)->right);
         }
         // void    balancingdel(RedBlackTree<type_name> **head, int position, bool test)
         // {
