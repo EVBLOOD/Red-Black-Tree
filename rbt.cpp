@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/23 10:53:44 by sakllam           #+#    #+#             */
-/*   Updated: 2022/08/28 17:54:36 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/01 17:20:21 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int main()
     std::vector<int> rr = {25,60,88,57,77,76,35,12,85,91,63,55,27,84,43,8,18,34,50,90};
     for (int s : ss)
       x.insert(s);
+    x.printing();
     for (int c : rr)
       x.remove(c);
     // x.insert(5);
