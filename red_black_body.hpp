@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/02 20:39:17 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/12 19:28:23 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ namespace ft
         RedBlackTree *parent;
         int           position;
         bool          color; // red == true; black == false
-        bool          DB;
-        RedBlackTree() : value(type_name()), left(NULL), right(NULL), parent(NULL), color(red) {}
+        RedBlackTree(type_name value) : value(value), left(NULL), right(NULL), parent(NULL), color(red) {}
     };
 
     template <class T, class Compare = std::less<T>, class Alloc = std::allocator<RedBlackTree<T> > >
@@ -59,125 +58,166 @@ namespace ft
         RedBlackTree<type_name> *ROOT;
         
         
-        RedBlackTree<type_name> *newnode(type_name value)
+
+        void swaping(RedBlackTree<type_name> *one, RedBlackTree<type_name> *two)
         {
-            RedBlackTree<T> *newnode = ac.allocate(1);
-            newnode->value = value;
-            newnode->color = red;
-            newnode->left = NULL;
-            newnode->right = NULL;
-            newnode->parent = NULL;
-            newnode->DB = false;
-            return newnode;
+            type_name   tmp = one->value;
+            int         color = one->color;
+            one->value = two->value;
+            one->color = two->color;
+            two->value = tmp;
+            two->color = color;
         }
-        size_amount max(size_amount a, size_amount b)
+        void    right_rotation(RedBlackTree<type_name> **root, bool coloring = false)
         {
-            if (a > b)
-                return a;
-            return b;
-        }
-        void    left_rotation(RedBlackTree<type_name> **root, bool clr, bool del)
-        {
-            // changing value only so no need to change the parent and color of it | else you may think of "blacking it"
-            type_name tmprtval = (*root)->value;
-            (*root)->value = (*root)->right->value;
-            (*root)->right->value = tmprtval;
-            if (clr)
-                (*root)->color = del;
-
-            RedBlackTree<type_name> *A = (*root); // the new root
-            RedBlackTree<type_name> *B = (*root)->right; // the new left --> must change it's position and parent
-            RedBlackTree<type_name> *C = B->right; // the new right --> must change it's position and parent
-            RedBlackTree<type_name> *Aleft = A->left; // in case of extra wieghts in left of old root
-
-            A->left = B;
-            // start : changing color to red + position to the new one and parent also
-            B->position = l;
-            B->parent = A;
-            if (clr)
-                B->color = !del;
-            // end
-
-            A->right = C;
-            // start : changing color to red + position to the new one and parent also
-            if (C) // in case of using it just as part of {rotate left + rotate right} 
+            swaping((*root)->left, *root);
+            RedBlackTree<type_name> *tmpA = (*root)->left;
+            (*root)->left = (*root)->left->left;
+            if ((*root)->left)
             {
-                C->position = r;
-                C->parent = A;
-                if (clr)
-                    C->color = !del;
+                (*root)->left->parent = *root;
+                if (coloring)
+                    (*root)->left->color = red;
             }
-            // end
-            
-            B->right = B->left; // returning to the normal order to sqp the problem made while changing values of ex root and new one!
-            if (B->right)
+            tmpA->left = tmpA->right;
+            if (tmpA->left)
             {
-                B->right->parent = B;
-                B->right->position = r;
+                tmpA->left->parent = tmpA;
+                tmpA->left->position = l;
             }
-
-            B->left = Aleft;
-            // start : keeping childs undercontrole!
-            if (Aleft)
-                B->left->parent = B;
-            //end
+            tmpA->right = (*root)->right;
+            if (tmpA->right)
+            {
+                tmpA->right->position = r;
+                tmpA->right->parent = tmpA;
+            }
+            (*root)->right = tmpA;
+            tmpA->position = r;
+            tmpA->parent = *root;
+            if (coloring)
+            {
+                (*root)->color = black;
+                tmpA->color = red;
+            }
         }
-        void    right_rotation(RedBlackTree<type_name> **root, bool clr, bool del)
+        void    left_rotation(RedBlackTree<type_name> **root, bool coloring = false)
         {
-            type_name tmprootvalue = (*root)->value;
-            (*root)->value = (*root)->left->value;
-            (*root)->left->value = tmprootvalue;
-
-            RedBlackTree<type_name> *A = (*root);
-            RedBlackTree<type_name> *B = A->left;
-            RedBlackTree<type_name> *C = B->left;
-
-            RedBlackTree<type_name> *keepAright = A->right;
-            A->right = B;
-            if (clr)
-                A->color = del;
-            
-            B->position = r;
-            B->parent = A;
-            if (clr)
-                B->color = !del;
-            A->left = C;
-            if (C)
+            swaping((*root)->right, *root);
+            RedBlackTree<type_name> *tmpA = (*root)->right;
+            (*root)->right = (*root)->right->right;
+            if ((*root)->right)
             {
-                C->parent = A;
-                if (clr)
-                    C->color = !del;
-                C->position = l;
+                (*root)->right->parent = *root;
+                (*root)->right->position = r;
+                if (coloring)
+                    (*root)->right->color = red;
             }
-            
-            B->left = B->right;
-            if (B->left)
-                B->left->position = l;
-            B->right = keepAright;
-            if (keepAright)
-                keepAright->parent = B;
-            
+            tmpA->right = tmpA->left;
+            if (tmpA->right)
+            {
+                tmpA->right->parent = tmpA;
+                tmpA->right->position = r;
+            }
+            tmpA->left = (*root)->left;
+            if (tmpA->left)
+            {
+                tmpA->left->position = l;
+                tmpA->left->parent = tmpA;
+            }
+            (*root)->left = tmpA;
+            tmpA->position = l;
+            tmpA->parent = *root;
+            if (coloring)
+            {
+                (*root)->color = black;
+                tmpA->color = red;
+            }
         }
-        void    balancing(RedBlackTree<type_name> **head, int position, RedBlackTree<type_name> *cerr)
+        void    balancing(RedBlackTree<type_name> **head, int position)
         {
             if (position == r)
             {
-                if ((*head)->right->right && (cerr->right->color == red))// || !cerr->left))
-                    return left_rotation(head, true, false);
-                right_rotation(&((*head)->right), false, false);
-                left_rotation(head, true, false);
+                if ((*head)->right->right && (*head)->right->right->color == red)//|| !(*head)->right->left))
+                    return left_rotation(head, true);
+                right_rotation(&((*head)->right), false);
+                left_rotation(head, true);
                 return;
             }
-            if ((*head)->left->left && (cerr->left->color == red))// || !cerr->right)) 
-                return right_rotation(head, true, false);
-            left_rotation(&((*head)->left), false, false);
-            right_rotation(head, true, false);
+            if ((*head)->left->left && (*head)->left->left->color == red) //|| !(*head)->left->right))
+                return right_rotation(head, true);
+            left_rotation(&((*head)->left), false);
+            right_rotation(head, true);
         }
-        int    recentlyadded(RedBlackTree<type_name> *x, type_name value)
+        RedBlackTree<type_name> *newnode(type_name value)
         {
-            if (x->left && x->left->value == value)
-                return (l);
-            return r;
+            RedBlackTree<type_name> *newnode = ac.allocate(1);
+            ac.construct(newnode, value);
+            return newnode;
+        }
+        void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
+        {
+            if ((*head) == NULL)
+            {
+                if (position == rt)
+                     ROOT = nv;
+                (*head) = nv;
+                nv->position = position;
+                if (position == rt)
+                    nv->color = black;
+                return;
+            }
+            if (cmpr(nv->value, (*head)->value))
+                insert(&((*head)->left), nv, l);
+            else if (cmpr((*head)->value, nv->value))
+                insert(&((*head)->right), nv, r);
+            else
+                return;
+            if ((*head)->left)
+                (*head)->left->parent = *head;
+            if ((*head)->right)
+                (*head)->right->parent = *head;
+            if ((*head)->color == black || (((*head)->left == NULL || (*head)->left->color == black) && ((*head)->right == NULL || (*head)->right->color == black)))
+                return;
+            if ((*head)->position == r)
+            {
+                if ((*head)->parent->left && (*head)->parent->left->color == red)
+                {
+                    (*head)->parent->left->color = black;
+                    if ((*head)->parent->position != rt)
+                        (*head)->parent->color = red;
+                    (*head)->color = black;
+                    return;
+                }
+                return balancing(&((*head)->parent), r);
+            }
+            if ((*head)->parent->right && (*head)->parent->right->color == red)
+            {
+                (*head)->parent->right->color = black;
+                if ((*head)->parent->position != rt)
+                    (*head)->parent->color = red;
+                (*head)->color = black;
+                return;
+            }
+            balancing(&((*head)->parent), l);
+        }
+        void    printing(RedBlackTree<type_name> *root, int level)
+        {
+            if (!root)
+                return;
+            printing(root->right, level + 1);
+            printing(root->left, level + 1);
+            std::cout << level << "\t";
+            if (root->position == rt)
+                std::cout << "position: root ";
+            else if (root->position == r)
+                std::cout << "position: right ";
+            else
+                std::cout << "position: left ";
+            if (root->color == red)
+                std::cout << "color: red ";
+            else
+                std::cout << "color: black ";
+            std::cout << " | the number: " << root->value << "\n";
         }
         // this part of code was writen by a student in 1337 and I'm leaving it here cause I appreciate his help!
         void debug()
@@ -201,71 +241,6 @@ namespace ft
                 }
             }
             std::cout <<"-------------------------------" << std::endl;
-        }
-        void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
-        {
-            if (*head == NULL)
-            {
-                if (position == rt)
-                     ROOT = nv;
-                *head = nv;
-                nv->position = position;
-                if (position == rt)
-                    nv->color = black;
-                return;
-            }
-            if (cmpr(nv->value, (*head)->value))
-                insert(&((*head)->left), nv, l);
-            else
-                insert(&((*head)->right), nv, r);
-            if ((*head)->left)
-                (*head)->left->parent = *head;
-            if ((*head)->right)
-                (*head)->right->parent = *head;
-            if ((*head)->color == black)
-                return;
-            if (((*head)->left == NULL || (*head)->left->color == black) && ((*head)->right == NULL || (*head)->right->color == black))
-                return;
-            if ((*head)->position == r)
-            {
-                if ((*head)->parent->left && (*head)->parent->left->color == red)
-                {
-                    (*head)->parent->left->color = black;
-                    if ((*head)->parent->position != rt)
-                        (*head)->parent->color = red;
-                    (*head)->color = black;
-                    return;
-                }
-                return balancing(&((*head)->parent), (*head)->position, *head);
-            }
-            if ((*head)->parent->right && (*head)->parent->right->color == red)
-            {
-                (*head)->parent->right->color = black;
-                if ((*head)->parent->position != rt)
-                    (*head)->parent->color = red;
-                (*head)->color = black;
-                return;
-            }
-            balancing(&((*head)->parent), (*head)->position, *head);
-        }
-        void    printing(RedBlackTree<type_name> *root, int level)
-        {
-            if (!root)
-                return;
-            printing(root->right, level + 1);
-            printing(root->left, level + 1);
-            std::cout << level << "\t";
-            if (root->position == rt)
-                std::cout << "position: root ";
-            else if (root->position == r)
-                std::cout << "position: right ";
-            else
-                std::cout << "position: left ";
-            if (root->color == red)
-                std::cout << "color: red ";
-            else
-                std::cout << "color: black ";
-            std::cout << " | the number: " << root->value << "\n";
         }
         // checker {made by: jalalium}
         bool check(RedBlackTree<type_name>* node, std::map<RedBlackTree<type_name>* , std::vector<int> > &mp)
@@ -334,21 +309,6 @@ namespace ft
                 return head->value;
             return thedeepest(head->right);
         }
-        // void    balabla(RedBlackTree<type_name> **head, int position, RedBlackTree<type_name> *cerr)
-        // {
-        //     if (position == r)
-        //     {
-        //         if ((*head)->right->right && (cerr->right->color == red || !cerr->left))
-        //             return left_rotation(head, true, false);
-        //         right_rotation(&((*head)->right), false, false);
-        //         left_rotation(head, true, false);
-        //         return;
-        //     }
-        //     if ((*head)->left->left && (cerr->left->color == red || !cerr->right))
-        //         return right_rotation(head, true, false);
-        //     left_rotation(&((*head)->left), false, false);
-        //     right_rotation(head, true, false);
-        // }
         void remove(RedBlackTree<type_name> **head, type_name element)
         {
             if (*head == NULL)
@@ -364,12 +324,12 @@ namespace ft
                 {
                     bool color = target->color;
                     int position = target->position;
-                    RedBlackTree<type_name> **parent = &((*head)->parent);
+                    RedBlackTree<type_name> *parent = (*head)->parent;
                     ac.destroy(*head);
                     ac.deallocate(*head, 1);
                     *head = NULL;
                     if (color == black)
-                        justfixit(parent, position);
+                        correctblackheigt(parent, position);
                     return;
                 }
                 if (target->left == NULL)
@@ -385,373 +345,77 @@ namespace ft
             }
         }
 
-        void justfixit(RedBlackTree<type_name> **head, int position)
-        {
-            std::cout << "head => " << (*head)->value << "\n";
-            if (position == rt)
-                return;
-            if (position == r)
-                return fixcases(head, (*head)->left, position);
-            fixcases(head, (*head)->right, position);
-        }
 
         void    balanceindeletion(RedBlackTree<type_name> **head, int position)
         {
             if (position == r)
             {
                 puts("left rotation");
-                if ((*head)->right->right)// && ((*head)->right->color == red))// || !(*head)->left)) // left oryit3jib
-                    return left_rotation(head, false, false);
-                right_rotation(&((*head)->right), false, false);
-                left_rotation(head, false, false);
+                if ((*head)->right->right && ((*head)->right->color == red))// || !(*head)->left)) // left oryit3jib
+                    return left_rotation(head);
+                right_rotation(&((*head)->right));
+                left_rotation(head);
                 return;
             }
                 puts("right rotation");
-            if ((*head)->left->left)// && ((*head)->left->color == red))// || !(*head)->right))
-                return right_rotation(head, false, false);
+            if ((*head)->left->left && ((*head)->left->color == red))// || !(*head)->right))
+                return right_rotation(head);
                 // return balanceindeletion(head, r);
             // puts("sss");
             // if ((*head)->left)
-            left_rotation(&((*head)->left), false, false);
+            left_rotation(&((*head)->left));
                 // puts("holy fuck l");
-            right_rotation(head, false, false);
+            right_rotation(head);
         }
 
-        bool blackchilds(RedBlackTree<type_name> *sibling)
-        {
-            return ((!sibling->left || sibling->left->color == black)
-                && (!sibling->right || sibling->right->color == black));
-        }
-        
-        RedBlackTree<type_name> *far_one(RedBlackTree<type_name> *sibling, int position)
-        {
-            if (position == r)
-                return (sibling->left);
-            return (sibling->right);
-        }
-
-         RedBlackTree<type_name> *near_one(RedBlackTree<type_name> *sibling, int position)
+        RedBlackTree<type_name> *nephew(RedBlackTree<type_name> *node, int position) // the child exists far away
         {
             if (position == l)
-                return (sibling->left);
-            return (sibling->right);
+                return node->right;
+            return node->left;
         }
-
-        bool faronecoloris(RedBlackTree<type_name> *sibling, int position, bool color)
+        RedBlackTree<type_name> *niece(RedBlackTree<type_name> *node, int position) // closer child of sibling
         {
-            if (position == r)
-                return (far_one(sibling, position)->color == color);
-            return (far_one(sibling, position)->color == color);
+          if (position == l)
+              return node->left;
+            return node->right;
         }
-        
-        bool nearonecoloris(RedBlackTree<type_name> *sibling, int position, bool color)
+        void correctionhelper(RedBlackTree<type_name> *sibling, int position)
         {
-            if (position == r)
-                return (sibling->right->color == color);
-            return (sibling->left->color == color);
-        }
-        
-        /*
-
-            // if w->color = RED
-            //     w->color ← BLACK //Case 1
-            //     x->p->color ← RED //Case 1
-            //     left-rotate(t, x->p) //Case 1
-            //     w ← x->p->right //Case 1
-            
-            if w->left->color = BLACK and w->right->color = BLACK
-                w->color ← RED //Case 2
-                x ← x->p //Case 2
-            else if w->right->color = BLACK
-                w->left->color ← BLACK                //Case 3
-                w->color ← RED          //Case 3
-                right-rotate(t, w)        //Case 3
-                w ← x->p->right         //Case 3
-                w->color ← x->p->color //Case 4
-                x->p->color ← BLACK //Case 4
-                w->right->color ← BLACK //Case 4
-                left-rotate(t, x->p) //Case 4
-                x ← t->root Case 4
-            else (same as then clause with "right" and "left" exchanged)
-                x->color ← BLACK
-
-
-        
-        */
-        void fixcases(RedBlackTree<type_name> **head, RedBlackTree<type_name> *sibling, int position) //mirror
-        {
-            std::cout << "sib : "<<  sibling->value << "\n";
-            puts("???");
-            // balanceindeletion(RedBlackTree<type_name> **head, int position)
             if (sibling->color == red)
             {
-                            // if w->color = RED
-            //     w->color ← BLACK //Case 1
-            //     x->p->color ← RED //Case 1
-            //     left-rotate(t, x->p) //Case 1
-            //     w ← x->p->right //Case 1
-                puts("case 2");
-                puts("----------------------------");
-                printing(*head, 0);
-                (*head)->color = red;
+                sibling->parent->color = red;
                 sibling->color = black;
-                puts("start");
-                balanceindeletion(head, sibling->position);
-                //////
-                if (position == l)
-                    sibling = (*head)->left;
-                else
-                    sibling = (*head)->right;
-                ////
-                                puts("-----------------------------------------------");
-                printing(*head, 0);
-
-                // puts("end");
-                // printing(*head, 0);
-                // if ((*head)->left)
-                    // (*head)->left->color = red;
-                // if ((*head)->right)
-                    // (*head)->right->color = red;
-                    
-                // if (position == l)
-                //     return justfixit(&((*head)->left), l); // HMMMMMMM
-                // return justfixit(&((*head)->right), r);
-                // puts("kdhdj");
+                balancing(&(sibling->parent), sibling->position);
             }
-            
-            if (blackchilds(sibling))
+            else if (nephew(sibling, position) && nephew(sibling, position)->color == red)
             {
-                puts("case 1");
+                sibling->color = sibling->parent->color;
+                sibling->parent->color = black;
+                nephew(sibling, position)->color = black;
+                balancing(&(sibling->parent), sibling->position);
+                sibling = sibling->parent;
+                return;
+            }
+            else if (niece(sibling, position) && niece(sibling, position)->color == red)
+            {
+                niece(sibling, position)->color = black;
                 sibling->color = red;
-                                puts("-----------------------------------------------");
-                printing(*head, 0);
-
-                // if ((*head)->color == black)
-                    *head = (*head)->parent;
-                    // return justfixit(&((*head)->parent), (*head)->position);
-                // (*head)->color = black;
-                // return;
+                balancing(&sibling, niece(sibling, position)->position);
             }
-
-            
-
-            
-            if (near_one(sibling, position) && nearonecoloris(sibling, position, red))
-                // && (!far_one(sibling, position) || faronecoloris(sibling, position, black)))
+            else
             {
-                puts("case 3");
-                near_one(sibling, position)->color = black;
-                // sibling->color = red;
-                            // puts("hola hola");
-                // if (sibling->value > (*head)->value)
-                    balanceindeletion(head, sibling->position);
-                                    puts("-----------------------------------------------");
-                printing(*head, 0);
-                // else
-                    // balanceindeletion(&((*head)->left), r);
-                            // puts("hola hola bey");
-                // return;
-                // return justfixit(head, position);
+                sibling->color = red;
+                sibling = sibling->parent;
             }
-            if (far_one(sibling, position) && faronecoloris(sibling, position, red))
-            {
-                puts("case 4");
-                far_one(sibling, position)->color = black;
-                balanceindeletion(head, sibling->position);
-                puts("-----------------------------------------------");
-                printing(*head, 0);
-                // justfixit(&((*head)->parent), (*head)->position);
-                // puts("end");
-            }
+            correctblackheigt(sibling->parent, sibling->position);
         }
-        
-        //  /*
-        //             Case 1: The sibling of x is red.
-        //                 we recolor the parent of x and x.sibling then we left rotate around x's parent.
-        //         */
-        //         if ((*head)->left && (*head)->left->color == red)
-        //         {
-        //             (*head)->color = red;
-        //             (*head)->left->color = black; // double black!
-        //             // rotate left the parent {head} left
-        //             return;;
-        //         }
-        //         /*
-        //             Case 2: The sibling of x is black and has two black children.
-        //                 we recolor x.sibling to red, move x upwards to x.parent and check again for this newX.
-        //         */
-        //         if (!((*head)->left) || ((*head)->left->color == black && (!(*head)->left->right ||
-        //             (*head)->left->right->color == black) && (!(*head)->left->left || (*head)->left->left->color == black)))
-        //         {
-        //             if ((*head)->left)
-        //                 (*head)->left->color = red;
-        //             return fixdoubleblack(&((*head)->parent), (*head)->position);
-        //         }
-        //         /*
-        //             Case 3: The sibling of x is black with one black child to the right.
-        //                 In this case, we recolor the sibling to red and sibling.leftChild to black,
-        //                 then we right rotate around the sibling. After this we have case 4.
-        //         */
-        //         if ((*head)->left->color == black && (!(*head)->left->right || (*head)->left->right->color == black))
-        //         {
-        //             (*head)->left->color = red;
-        //             if ((*head)->left->left)
-        //                 (*head)->left->left = red;
-        //             // right rotate sibling
-        //         }
-        //         /*
-        //             Case 4: The sibling of x is black with one red child to the right.
-        //                 we recolor the sibling to the color of x.parent and x.parent and sibling.rightChild to black.
-        //                 Then we left rotate around x.parent.
-        //         */
-        //         (*head)->left->color = (*head)->color;
-        //         (*head)->color = black;
-        //         (*head)->left->right = black;
-        //         // left rotate parent (*head);
-        // void fixcase(RedBlackTree<type_name> **head, RedBlackTree<type_name> *sibling, int position)
-        // {
-        //         /*
-        //             Case 1: The sibling of x is red.
-        //                 we recolor the parent of x and x.sibling then we left rotate around x's parent.
-        //         */
-        //         if (sibling && sibling->color == black)
-        //         {
-        //             puts("case 1");
-        //             sibling->color = red;
-        //             if ((*head)->color == black && (*head)->position != rt)
-        //                 return fixdoubleblack(&((*head)->parent), (*head)->position);
-        //             (*head)->color = black;
-        //             return;
-        //         }
-        //         if (sibling && sibling->color == red)
-        //         {
-        //             (*head)->color = red;
-        //             sibling->color = black;
-        //             balancedel(head, sibling->position);
-        //         }
-        //         /*
-        //             Case 2: The sibling of x is black and has two black children.
-        //                 we recolor x.sibling to red, move x upwards to x.parent and check again for this newX.
-        //         */
-        //         if (!(sibling) || (sibling->color == black && (!sibling->right ||
-        //             sibling->right->color == black) && (!sibling->left || sibling->left->color == black)))
-        //         {
-        //             puts("case 2");
-        //             if (sibling)
-        //                 sibling->color = red;
-        //             return fixdoubleblack(&((*head)->parent), (*head)->position);
-        //         }
-        //         /*
-        //             Case 3: The sibling of x is black with one black child to the right.
-        //                 In this case, we recolor the sibling to red and sibling.leftChild to black,
-        //                 then we right rotate around the sibling. After this we have case 4.
-        //         */
-        //         if (sibling->color == black && (!sibling->right || sibling->right->color == black))
-        //         {
-        //             puts("case 3");
-        //             sibling->color = red;
-        //             if (sibling->left)
-        //                 sibling->left->color = red;
-        //             balancedel(&sibling, position);
-        //             // right rotate sibling
-        //         }
-        //             puts("case 4");
-        //         /*
-        //             Case 4: The sibling of x is black with one red child to the right.
-        //                 we recolor the sibling to the color of x.parent and x.parent and sibling.rightChild to black.
-        //                 Then we left rotate around x.parent.
-        //         */
-        //         // if (sibling->color == black && sibling->right->color == red)
-        //         sibling->color = (*head)->color;
-        //         (*head)->color = black;
-        //         if (sibling->right)
-        //             sibling->right->color = black;
-        //         balancedel(head, sibling->position);
-        //         // left rotate parent (head);
-        //         // left_rotation(head, true, true);
-        // }
-        // void    balancedel(RedBlackTree<type_name> **head, int position)
-        // {
-        //     if (position == r)
-        //     {
-        //         if ((*head)->right->right  && ((*head)->right->color == red || !(*head)->left))
-        //             return left_rotation(head, true, false);
-        //         right_rotation(&((*head)->right), false, false);
-        //         left_rotation(head, true, false);
-        //         return;
-        //     }
-        //     if ((*head)->left->left && ((*head)->left->color == red || !(*head)->right))
-        //         return right_rotation(head, true, false);
-        //     left_rotation(&((*head)->left), false, false);
-        //     right_rotation(head, true, false);
-        // }
-        // void fixdoubleblack(RedBlackTree<type_name> **head, int position)
-        // {
-        //     puts("fixdoubleblack called");
-        //     if ((*head)->position == rt)
-        //         return;
-        //     if (position == r) // checking the left subl
-        //         return puts("right"), fixcases(head, (*head)->left, position);
-        //     puts("left"); fixcases(head, (*head)->right, position);
-        // }
-        // void    balancingdel(RedBlackTree<type_name> **head, int position, bool test)
-        // {
-        //     if (position == r)
-        //     {
-        //         if ((*head)->right->right)
-        //         {
-                    
-        //         puts ("right right");
-        //             return left_rotation(head, test, test);
-        //         }
-        //         right_rotation(&((*head)->right), !test, test);
-        //         left_rotation(head, test, test);
-        //         return;
-        //     }
-        //     if ((*head)->left->left)
-        //     {
-        //         puts ("left left");
-        //         return right_rotation(head, test, test);
-        //     }
-        //     left_rotation(&((*head)->left), !test, test);
-        //     right_rotation(head, test, test);
-        // }
-        // void fixblack(RedBlackTree<type_name> **head, int position)
-        // {
-        //     if (position == r)
-        //     {
-        //         if (!((*head)->left))
-        //             return;
-        //         if ((*head)->left->right == NULL && (*head)->left->left == NULL)
-        //         {
-        //             puts("coloring");
-        //             (*head)->color = black;
-        //             (*head)->left->color = red;
-        //             return;
-        //         }
-        //         puts("bal");
-        //         // if ((*head)->left->color != black)
-                    
-        //         balancingdel(head, (*head)->position, true);
-        //         return;
-        //     }
-        //     if (!((*head)->right))
-        //         return;
-        //     if ((*head)->right->right == NULL && (*head)->right->left == NULL)
-        //     {
-        //          puts("coloring");
-        //         (*head)->color = black;
-        //         (*head)->right->color = red;
-        //         return ;
-        //     }
-        //         puts("bal");
-        //     balancingdel(head, (*head)->position, true);
-        //     if ((*head)->left->left)
-        //         fixblack(&((*head)->left->left), (*head)->left->left->position);
-        //     if ((*head)->left->right)
-        //         fixblack(&((*head)->left->right), (*head)->left->right->position);
-        //     std::cout << "ckeck: " << (*head)->value << "\n";
-        // }
+        void correctblackheigt(RedBlackTree<type_name> *leaf_parent, int position)
+        {
+            if (position == r)
+                return correctionhelper(leaf_parent->left, r);
+            correctionhelper(leaf_parent->right, l);
+        }
         public:
             RBT() : head(NULL), size(0) {}
             void insert(type_name value)
