@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/13 19:01:23 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/14 17:11:53 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,28 +354,46 @@ namespace ft
                 if (position == r)
                 {
                     if ((*head)->right->right && (*head)->right->right->color == red)
+                    {
+                        (*head)->right->color = (*head)->color;
+                        (*head)->color = black;
+                        (*head)->right->right->color = black;
                         return left_rotation(head, false);
+                    }
+                    (*head)->right->color = red;
+                    (*head)->right->left->color = black;
                     right_rotation(&((*head)->right), false);
+                    (*head)->right->color = (*head)->color;
+                    (*head)->color = black;
+                    (*head)->right->right->color = black;
                     left_rotation(head, false);
                     return ;
                 }
-                if ((*head)->left->left && (*head)->left->left->color == red)// || !(*head)->right))
+                if ((*head)->left->left && (*head)->left->left->color == red)
+                {
+                    (*head)->left->color = (*head)->color;
+                    (*head)->color = black;
+                    (*head)->left->left->color = black;
                     return right_rotation(head, false);
+                }
+                (*head)->left->color = red;
+                (*head)->left->right->color = black;
                 left_rotation(&((*head)->left), false);
+                (*head)->left->color = (*head)->color;
+                (*head)->color = black;
+                (*head)->left->left->color = black;
                 right_rotation(head, false);
                 return ;
             }
             if (position == r)
             {
-                puts("left rotation");
-                if ((*head)->right->right)// || !(*head)->left)) // left oryit3jib
+                if ((*head)->right->right)
                     return left_rotation(head, false);
                 right_rotation(&((*head)->right), false);
                 left_rotation(head, false);
                 return;
             }
-                puts("right rotation");
-            if ((*head)->left->left)// || !(*head)->right))
+            if ((*head)->left->left)
                 return right_rotation(head, false);
             left_rotation(&((*head)->left), false);
             right_rotation(head, false);
@@ -442,18 +460,28 @@ namespace ft
             if ((nephew(*sibling, position) && nephew(*sibling, position)->color == red)
                 || (niece(*sibling, position) && niece(*sibling, position)->color == red))
             {
-                puts("cs 1");
+                puts("case 1");
+                // if (niece(*sibling, position) && niece(*sibling, position)->color == red)
+                    // niece(*sibling, position)->color = black;
+                // else
+                    // nephew(*sibling, position)->color = black;
+                // (*sibling)->parent->color = black;
+                // (*sibling)->color = red;
+                //  std::cout << "old sibling value : " << (*sibling)->value << "\n";
+                // if (nephew(*sibling, position) && nephew(*sibling, position)->color == red)
+                    // std::cout << "-> value : " << nephew(*sibling, position)->value << "\n";
+                // std::cout << "new parent value : " << (*sibling)->parent->value << "\n";
                 balanceindeletion(&((*sibling)->parent), (*sibling)->position);
-                (*sibling)->parent->color = red;
-                if ((*sibling)->parent->right)
-                    (*sibling)->parent->right->color = black;
-                if ((*sibling)->parent->left)
-                    (*sibling)->parent->left->color = black;
+                // if ((*sibling)->parent->right != (*sibling))
+                //     (*sibling)->parent->right->color = red;
+                // else
+                //     std::cout << "value : " << (*sibling)->parent->left->value << "\n";
+                //     (*sibling)->parent->left->color = red;
                 return ;
             }
             if ((*sibling)->color == black)
             {
-                puts("cs 2");
+                puts("case 2");
                 (*sibling)->color = red;
                 if ((*sibling)->parent->color == black)
                     correctblackheigt(&((*sibling)->parent->parent), (*sibling)->parent->position);
@@ -463,15 +491,10 @@ namespace ft
             }
             if ((*sibling)->color == red)
             {
-                puts("cs 3");
-                std::cout << "sibling value : " << (*sibling)->value << "\n";
-                std::cout << "parent value : " << (*sibling)->parent->value << "\n";
+                puts("case 3");
                 (*sibling)->parent->color = red;
                 (*sibling)->color = black;
                 balanceindeletion(&((*sibling)->parent), (*sibling)->position, false);
-                std::cout << "sibling value : " << (*sibling)->value << "\n";
-                
-                //     return correctblackheigt(&((*sibling)->parent->right), r);
                 if (position == l)
                     return correctblackheigt(&((*sibling)->parent->left), l);
                 return correctblackheigt(&((*sibling)->parent->right), r);
@@ -481,9 +504,9 @@ namespace ft
         {
             if (!leaf_parent || !*leaf_parent)
                 return ;
-            if (position == r)// && (!(*leaf_parent)->right || (*leaf_parent)->right->color == black))
+            if (position == r)
                 return fixcase(&((*leaf_parent)->left), r);
-            if (position == l)// && (!(*leaf_parent)->left || (*leaf_parent)->left->color == black))
+            if (position == l)
                 return fixcase(&((*leaf_parent)->right), l);
         }
         public:
