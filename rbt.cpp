@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/23 10:53:44 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/14 17:17:12 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/15 12:56:53 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,32 @@
 // end
 int main()
 {
-    // ft::RBT<int> x;
+    ft::RBT<int> x;
     // generating random numbers also {made by: jalalium}
     // std::set<int> st;
 	  // srand(time(0));
-	  // while(st.size() < 100)
-	  // 	st.insert(rand()%9999);
+	  // while(st.size() < 100000)
+	  // 	st.insert(rand()%999999);
 	  // std::vector<int> v(st.begin(), st.end());
 	  // random_shuffle(v.begin(), v.end());
-    //   std::cout << " numbers to insert : \n";	
+      // std::cout << " numbers to insert : \n";	
 	  // for (int z : v)
 	  //  	std::cout << z << " " ;	
     // std::cout << std::endl;
     // int i = 0;
     // for (int z : v)
     // {
-    //   // if (i == 2)
-    //   //   break;
     //   x.insert(z);
-    //   i++;
     // }
-    // std::vector<int> ss = {77,76,43,27,8,85,55,63,18,91,57,90,34,25,50,12,88,35,60,84};
-    // std::vector<int> rr = {25,60,88,57,77,76,35,12,85,91,63,55,27,84,43,8,18,34,50,90};
-    // for (int s : ss)
-    //   x.insert(s);
+    std::vector<int> ss = {77,76,43,27,8,85,55,63,18,91,57,90,34,25,50,12,88,35,60,84};
+    std::vector<int> rr = {25,60,88,57,77,76,35,12,85,91,63,55,27,84,43,8,18,34,50,90};
+    std::cout << x.find(55) << "\n";
+    for (int s : ss)
+      x.insert(s);
+    std::cout << x.find(55) << "\n";
     // x.printing();
-    // for (int c : rr)
-    //   x.remove(c);
+    for (int c : rr)
+      x.remove(c);
     // x.insert(5);
     // x.insert(20);
     // x.insert(15);
@@ -70,12 +69,12 @@ int main()
     // i = 0;
     // for (int z : v)
     // {
-    //   // if (i == 2)
-    //   //   break;
-		//   x.remove(z);
-    //   if (std::find(v.begin(), v.end(), z) != v.end()) 
-    //     v.erase(std::find(v.begin(), v.end(), z));
-    //   i++;
+      // if (i == 2)
+      //   break;
+		  // x.remove(z);
+      // if (std::find(v.begin(), v.end(), z) != v.end()) 
+      //   v.erase(std::find(v.begin(), v.end(), z));
+      // i++;
     // }
     // i = 0;
     // for (int z : v)
