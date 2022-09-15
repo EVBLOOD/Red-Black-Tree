@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/15 20:02:45 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/15 20:04:50 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -443,9 +443,11 @@ namespace ft
         }
         void fix_double_black(RedBlackTree<type_name> **leaf_parent, int position)
         {
+            if (position == rt)
+                return;
             if (position == r)
                 return fix_case(&((*leaf_parent)->left), r);
-            if (position == l)
+            else
                 return fix_case(&((*leaf_parent)->right), l);
         }
         bool find_helper(RedBlackTree<type_name> *head, type_name value)
