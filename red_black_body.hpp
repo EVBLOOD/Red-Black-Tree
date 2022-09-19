@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/19 22:59:18 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/19 23:13:18 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,7 @@ namespace ft
         }
         RedBlackTree<type_name> *prev(RedBlackTree<type_name> *x, int position, RedBlackTree<type_name> *old)
         {
-            if (x == NULL)
+            if (position == 10)
                 return thedeepest_right(head);
             if (x->left && old != x->left)
                 return thedeepest_right(x->left);
