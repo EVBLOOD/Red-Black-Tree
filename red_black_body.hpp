@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/19 19:05:36 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/19 22:59:18 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
-#include <sys/_types/_size_t.h>
 #include <iostream>
 namespace ft
 {
@@ -231,7 +230,6 @@ namespace ft
         {
             if (x == NULL)
                 return (NULL);
-            std::cout <<  " deb : " << x->value << "\n";
             if (x->right && old != x->right)
                 return thedeepest_left(x->right);
             if (x->position == l)
@@ -248,9 +246,11 @@ namespace ft
         {
             if (x == NULL)
                 return thedeepest_right(head);
-            if (x->left && old != x)
-                return prev(x->left, x->position, x);
-            return x->parent;
+            if (x->left && old != x->left)
+                return thedeepest_right(x->left);
+            if (x->position == r)
+                return x->parent;
+            return prev(x->parent, l, x);
         }
         // this part of code was writen by a student in 1337 and I'm leaving it here cause I appreciate his help!
         // void debug()

@@ -7,7 +7,7 @@ int main()
     ft::RBT<int> name;
     std::map<int, int> name1;
 
-    for (int i = 1; i < 10; i++)
+    for (int i = 1; i < 100; i++)
     {
         name.insert(i);
         name1[i] = i;
