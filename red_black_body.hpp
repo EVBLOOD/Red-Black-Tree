@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/15 20:04:50 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/19 19:05:36 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,6 @@ namespace ft
         {
             if (!root)
                 return;
-            printing(root->right, level + 1);
             printing(root->left, level + 1);
             std::cout << level << "\t";
             if (root->position == rt)
@@ -220,6 +219,38 @@ namespace ft
             else
                 std::cout << "color: black ";
             std::cout << " | the number: " << root->value << "\n";
+            printing(root->right, level + 1);
+        }
+        RedBlackTree<type_name> *thedeepest_left(RedBlackTree<type_name> *head)
+        {
+            if (head->left == NULL)
+                return head;
+            return thedeepest_left(head->left);
+        }
+        RedBlackTree<type_name> *next(RedBlackTree<type_name> *x, int position, RedBlackTree<type_name> *old)
+        {
+            if (x == NULL)
+                return (NULL);
+            std::cout <<  " deb : " << x->value << "\n";
+            if (x->right && old != x->right)
+                return thedeepest_left(x->right);
+            if (x->position == l)
+                    return x->parent;
+            return next(x->parent, x->position, x);
+        }
+        RedBlackTree<type_name> *thedeepest_right(RedBlackTree<type_name> *head)
+        {
+            if (head->right == NULL)
+                return head;
+            return thedeepest_right(head->right);
+        }
+        RedBlackTree<type_name> *prev(RedBlackTree<type_name> *x, int position, RedBlackTree<type_name> *old)
+        {
+            if (x == NULL)
+                return thedeepest_right(head);
+            if (x->left && old != x)
+                return prev(x->left, x->position, x);
+            return x->parent;
         }
         // this part of code was writen by a student in 1337 and I'm leaving it here cause I appreciate his help!
         // void debug()
@@ -483,6 +514,20 @@ namespace ft
                 // std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
 				// assert(check(head, mp));
                 // std::cout << "INSERTED " << value << " SUCCESSFULLY" << std::endl;
+            }
+            RedBlackTree<type_name> *begin()
+            {
+                return thedeepest_left(head);
+            }
+            RedBlackTree<type_name> *_prev(RedBlackTree<type_name> *x)
+            {
+                if (x == NULL)
+                    return prev(x, 10, x);
+                return prev(x, x->position, x);
+            }
+            RedBlackTree<type_name> *_next(RedBlackTree<type_name> *x)
+            {
+                return next(x, x->position, x);
             }
             void  printing()
             {
