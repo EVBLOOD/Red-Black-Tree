@@ -27,8 +27,8 @@ int main()
     {
         
         std::cout << nav->value << std::endl;
-        if (pointer == nav)
-            break;
+        // if (pointer == nav)
+        //     break;
         nav = name._prev(nav);
     }
     // name.printing();
