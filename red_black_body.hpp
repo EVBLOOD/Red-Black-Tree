@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/20 18:43:38 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/26 18:05:16 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ namespace ft
         }
         RedBlackTree<type_name> *thedeepest_left(RedBlackTree<type_name> *head)
         {
-            if (head->left == NULL)
+            if (!head || head->left == NULL)
                 return head;
             return thedeepest_left(head->left);
         }
@@ -238,7 +238,7 @@ namespace ft
         }
         RedBlackTree<type_name> *thedeepest_right(RedBlackTree<type_name> *head)
         {
-            if (head->right == NULL)
+            if (head || head->right == NULL)
                 return head;
             return thedeepest_right(head->right);
         }
