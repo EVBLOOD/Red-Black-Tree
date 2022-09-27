@@ -6,7 +6,7 @@
 /*   By: sakllam <sakllam@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/22 18:06:02 by sakllam           #+#    #+#             */
-/*   Updated: 2022/09/26 18:05:16 by sakllam          ###   ########.fr       */
+/*   Updated: 2022/09/28 00:19:14 by sakllam          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,28 +153,28 @@ namespace ft
             ac.construct(newnode, value);
             return newnode;
         }
-        void    insert(RedBlackTree<type_name> **head, RedBlackTree<type_name> *nv, int position)
+        void    insert(RedBlackTree<type_name> **head, type_name nv, int position)
         {
             if ((*head) == NULL)
             {
                 // if (position == rt)
                 //      ROOT = nv;
-                *head = nv;
-                nv->position = position;
+                *head = newnode(nv);
+                (*head)->position = position;
                 if (position == rt)
-                    nv->color = black;
+                    (*head)->color = black;
                 size = size + 1;
                 return;
             }
-            if (cmpr(nv->value, (*head)->value))
+            if (cmpr(nv, (*head)->value))
                 insert(&((*head)->left), nv, l);
-            else if (cmpr((*head)->value, nv->value))
+            else if (cmpr((*head)->value, nv))
                 insert(&((*head)->right), nv, r);
             else
                 return;
-            if ((*head)->left && (*head)->left->value == nv->value)
+            if ((*head)->left)
                 (*head)->left->parent = *head;
-            else
+            if ((*head)->right)
                 (*head)->right->parent = *head;
             if ((*head)->color == black ||
                     (((*head)->left == NULL || (*head)->left->color == black) && ((*head)->right == NULL || (*head)->right->color == black)))
@@ -507,7 +507,7 @@ namespace ft
             }
             void insert(type_name value)
             {
-                insert(&head, newnode(value), rt);
+                insert(&head, value, rt);
                 // checking time!
                 // std::map<RedBlackTree<type_name>* , std::vector<int> > mp;
 				// assert(check(head, mp));
